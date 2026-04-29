@@ -12,12 +12,16 @@
 
     <style>
         :root {
-            /* Nova paleta Preto e Cinza */
+            /* Paleta Preto e Cinza */
             --black: #111111;
             --black-mid: #27272a;
             --gray-dark: #3f3f46;
             --gray-light: #f4f4f5;
             --gray-border: #e4e4e7;
+            
+            /* Destaque Hover */
+            --red: #dc2626;
+            --red-mid: #ef4444;
 
             --bg: #f9fafb;
             --surface: #ffffff;
@@ -65,7 +69,6 @@
 
         .header-brand { display: flex; align-items: center; gap: 14px; }
         
-        /* Ícone da marca customizado em preto e branco */
         .brand-icon-wrapper { 
             width: 44px; 
             height: 44px; 
@@ -84,34 +87,43 @@
         .brand-name span { color: var(--text-3); font-weight: 700;}
         .header-pill { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: #fff; font-size: 12px; font-weight: 600; padding: 5px 12px; border-radius: 20px; letter-spacing: 0.5px; text-transform: uppercase; }
 
-        .hero { background: linear-gradient(135deg, var(--black) 0%, var(--gray-dark) 100%); padding: 56px 48px 48px; position: relative; overflow: hidden; }
+        /* Fundo removido e ajustado para a cor principal de fundo */
+        .hero { padding: 56px 48px 48px; position: relative; overflow: hidden; background-color: transparent; }
         .hero-content { position: relative; z-index: 1; max-width: 1200px; margin: 0 auto; }
-        .hero-label { display: inline-flex; align-items: center; gap: 8px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: #fff; font-size: 11px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; padding: 5px 12px; border-radius: 20px; margin-bottom: 20px; }
-        .hero h1 { font-family: var(--font-display); font-size: clamp(28px, 4vw, 42px); font-weight: 800; color: #fff; line-height: 1.15; margin-bottom: 12px; }
+        
+        /* Textos e chips ajustados para preto/cinza */
+        .hero-label { display: inline-flex; align-items: center; gap: 8px; background: rgba(0,0,0,0.05); border: 1px solid var(--border-strong); color: var(--black); font-size: 11px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; padding: 5px 12px; border-radius: 20px; margin-bottom: 20px; }
+        .hero h1 { font-family: var(--font-display); font-size: clamp(28px, 4vw, 42px); font-weight: 800; color: var(--black); line-height: 1.15; margin-bottom: 12px; }
         .hero h1 em { font-style: normal; color: var(--text-3); }
-        .hero p { color: rgba(255,255,255,0.7); font-size: 15px; line-height: 1.6; max-width: 500px; margin-bottom: 32px; }
+        .hero p { color: var(--text-2); font-size: 15px; line-height: 1.6; max-width: 500px; margin-bottom: 32px; font-weight: 500; }
 
         .stats-row { display: flex; gap: 24px; flex-wrap: wrap; }
-        .stat-chip { display: flex; align-items: center; gap: 10px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.10); border-radius: var(--radius-sm); padding: 10px 16px; backdrop-filter: blur(6px); }
-        .stat-chip i { font-size: 18px; color: #fff; }
-        .stat-num { font-family: var(--font-display); font-size: 18px; font-weight: 800; color: #fff; line-height: 1; }
-        .stat-label { font-size: 11px; color: rgba(255,255,255,0.5); font-weight: 500; margin-top: 2px; }
+        .stat-chip { display: flex; align-items: center; gap: 10px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 10px 16px; box-shadow: var(--shadow-sm); }
+        .stat-chip i { font-size: 18px; color: var(--black); }
+        .stat-num { font-family: var(--font-display); font-size: 18px; font-weight: 800; color: var(--black); line-height: 1; }
+        .stat-label { font-size: 11px; color: var(--text-2); font-weight: 500; margin-top: 2px; text-transform: uppercase; letter-spacing: 0.5px; }
 
-        main { flex: 1; padding: 40px 48px 60px; max-width: 1200px; margin: 0 auto; width: 100%; }
+        main { flex: 1; padding: 10px 48px 60px; max-width: 1200px; margin: 0 auto; width: 100%; }
 
         .section-label { font-size: 11px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: var(--text-3); margin-bottom: 16px; }
         .tools-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 24px; }
+        
         .tool-card { background: var(--surface); border: 1.5px solid var(--border); border-radius: var(--radius); padding: 28px; text-decoration: none; color: inherit; display: flex; flex-direction: column; gap: 14px; position: relative; overflow: hidden; transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease; box-shadow: var(--shadow-sm); animation: cardIn 0.4s ease both; }
 
         @keyframes cardIn { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: translateY(0); } }
-        .tool-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-lg); border-color: var(--black); }
         
-        .card-accent { position: absolute; top: 0; left: 0; right: 0; height: 3px; background: linear-gradient(90deg, var(--black), var(--text-3)); transform: scaleX(0); transform-origin: left; transition: transform 0.3s ease; border-radius: var(--radius) var(--radius) 0 0; }
+        /* Alteração da Borda ao Passar o Mouse (Hover) para Vermelho */
+        .tool-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-lg); border-color: var(--red); }
+        
+        /* Top line em gradiente Vermelho */
+        .card-accent { position: absolute; top: 0; left: 0; right: 0; height: 3px; background: linear-gradient(90deg, var(--red), var(--red-mid)); transform: scaleX(0); transform-origin: left; transition: transform 0.3s ease; border-radius: var(--radius) var(--radius) 0 0; }
         .tool-card:hover .card-accent { transform: scaleX(1); }
         
         .card-header { display: flex; align-items: flex-start; justify-content: space-between; }
+        
+        /* Fundo do Ícone para Vermelho no Hover */
         .card-icon { width: 52px; height: 52px; background: var(--gray-light); border-radius: var(--radius-sm); display: flex; align-items: center; justify-content: center; color: var(--black); font-size: 26px; flex-shrink: 0; transition: background 0.25s, color 0.25s; }
-        .tool-card:hover .card-icon { background: var(--black); color: #fff; }
+        .tool-card:hover .card-icon { background: var(--red); color: #fff; }
         
         .card-category { font-size: 10px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--text-2); background: var(--bg); border: 1px solid var(--border); padding: 3px 9px; border-radius: 20px; }
         .card-title { font-family: var(--font-display); font-size: 18px; font-weight: 700; color: var(--black); line-height: 1.2; }
@@ -120,7 +132,7 @@
         .card-footer { display: flex; align-items: center; justify-content: space-between; padding-top: 16px; border-top: 1px solid var(--border); }
         .status-dot { display: flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 600; color: var(--text-2); }
         
-        /* Botões pretos com letras brancas, conforme solicitado */
+        /* Botão para Vermelho no Hover */
         .btn-access { 
             display: flex; 
             align-items: center; 
@@ -133,7 +145,7 @@
             border-radius: 6px;
             transition: background-color 0.2s, gap 0.2s; 
         }
-        .tool-card:hover .btn-access { background-color: var(--gray-dark); gap: 9px; }
+        .tool-card:hover .btn-access { background-color: var(--red); gap: 9px; }
 
         footer { background: var(--surface); border-top: 1px solid var(--border); padding: 18px 48px; display: flex; align-items: center; justify-content: space-between; }
         .footer-copy { font-size: 12px; color: var(--text-3); font-weight: 500; }
@@ -143,7 +155,7 @@
         @media (max-width: 768px) {
             header { padding: 0 20px; }
             .hero  { padding: 36px 20px 32px; }
-            main   { padding: 28px 20px 60px; }
+            main   { padding: 10px 20px 60px; }
             .tools-grid { grid-template-columns: 1fr; }
             .stats-row { gap: 12px; }
             footer { flex-direction: column; gap: 12px; text-align: center; }
