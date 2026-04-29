@@ -1645,19 +1645,23 @@ toast.type === 'info' ? 'bg-slate-800 text-white' :
 </div>
 
 )}
-{/* BOTÃO VOLTAR FLUTUANTE */}
-<button
-  onClick={() => window.history.back()}
-  className="fixed bottom-6 left-6 z-[60] flex items-center gap-2 bg-slate-900 text-white px-4 py-2.5 rounded-lg shadow-xl font-medium hover:bg-slate-800 transition no-print"
-  title="Voltar à página anterior"
->
-  <ChevronLeft size={18} />
-  Voltar
-</button>
-</div>
-);
-}
-ReactDOM.createRoot(document.getElementById('root')).render(React.createElement(MinistryScheduler));
+{/* BOTÃO VOLTAR PARA A PÁGINA INICIAL */}
+        <div className="mt-8 no-print flex justify-start">
+          <button
+            onClick={() => window.location.href = 'https://vitor1ramos.github.io/liderministeriofelipeevitor'}
+            className="flex items-center gap-2 bg-slate-900 text-white px-5 py-2.5 rounded-lg shadow-sm font-medium hover:bg-slate-800 transition"
+            title="Voltar para a página inicial"
+          >
+            <ChevronLeft size={18} />
+            Voltar
+          </button>
+        </div>
+
+      </div>
+    );
+  }
+
+  ReactDOM.createRoot(document.getElementById('root')).render(React.createElement(MinistryScheduler));
 </script>
 </body>
 </html>
