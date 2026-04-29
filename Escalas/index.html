@@ -399,7 +399,6 @@
     }, [baseDate, customEvents, weeksToShow]);
 
     // Grid balanceado: escolhe entre 3 ou 4 colunas pra evitar linhas órfãs
-    // Score = quão "cheia" fica a última fileira. Divisão exata vence sempre.
     const optimalCols = useMemo(() => {
       const n = dates.length;
       if (n <= 0) return 3;
@@ -516,7 +515,6 @@
       }]);
       setNewEventTitle(''); setNewEventTime('19:30');
       setShowAddEventModal(false);
-      // Reposicionar visualização para incluir a data adicionada
       const eventDate = fromISODate(newEventDate);
       const diff = Math.floor((eventDate - new Date(baseDate.getFullYear(), baseDate.getMonth(), baseDate.getDate())) / (1000 * 60 * 60 * 24));
       if (diff < 0 || diff > weeksToShow * 7) {
@@ -533,7 +531,7 @@
     };
 
     // ================================================================
-    // Disponibilidade 🔋 ❌ / ESCALA
+    // DISPONIBILIDADE / ESCALA
     // ================================================================
     const toggleUnavailability = (d, id) => {
       if (!requireEdit()) return;
@@ -553,7 +551,6 @@
     const isUnavailable = (d, id) => unavailability[d]?.includes(id);
     const isInRoster = (d, id, rk) => roster[d]?.includes(`${id}:${rk}`);
 
-    // Conflitos: membro escalado em data marcada como indisponível
     const conflicts = useMemo(() => {
       const list = [];
       dates.forEach(d => {
@@ -570,14 +567,13 @@
       return list;
     }, [dates, roster, unavailability, members, roles]);
 
-    // Stats / Balanceamento — conta DIAS escalado dentro do RANGE VISÍVEL
     const stats = useMemo(() => {
       const visibleDateStrs = new Set(dates.map(d => d.dateStr));
       const memberDays = {};
       members.forEach(m => { memberDays[m.id] = 0; });
 
       Object.entries(roster).forEach(([dateStr, arr]) => {
-        if (!visibleDateStrs.has(dateStr)) return; // só conta datas visíveis
+        if (!visibleDateStrs.has(dateStr)) return;
         const memberSet = new Set();
         arr.forEach(a => {
           const [mId] = a.split(':');
@@ -595,7 +591,6 @@
       return { sorted, max: totalDays || 1, totalDays };
     }, [members, roster, dates]);
 
-    // Cor da barra: verde (≥2 folgas), amarelo (1 folga), vermelho (sem folga)
     const getBarColor = (count, max) => {
       if (count === 0) return 'bg-slate-300';
       if (count >= max) return 'bg-rose-500';
@@ -604,7 +599,7 @@
     };
 
     // ================================================================
-    // EXPORTAÇÃO: Salvar HTML, PDF (print), PNG, Copy
+    // EXPORTAÇÃO
     // ================================================================
     const handleSaveAs = () => {
       if (!requireEdit()) return;
@@ -616,7 +611,6 @@
       const b64 = toBase64(JSON.stringify(cData));
       saveLocalData(cData);
 
-      // Pega o conteúdo dos elementos base do código original (sem clonar o DOM inteiro)
       const styleNode = document.getElementById('app-style');
       const scriptNode = document.getElementById('app-script');
 
@@ -628,7 +622,6 @@
       const styleContent = styleNode.textContent;
       const scriptContent = scriptNode.textContent;
 
-      // Busca e troca os dados salvos dentro da string pura do React
       const holderRegex = /(\/\/\s*DATA_HOLDER_START[\s\S]*?\b(?:const|var|let)\s+DATA_B64\s*=\s*")(.*?)(";[\s\S]*?\/\/\s*DATA_HOLDER_END)/g;
       
       if (!holderRegex.test(scriptContent)) {
@@ -638,12 +631,9 @@
       
       const newScriptContent = scriptContent.replace(holderRegex, `$1${b64}$3`);
 
-      // Usa um truque simples com strings para as tags de script
       const sTagOpen = "<" + "script>";
       const sTagClose = "</" + "script>";
 
-      // Remonta o arquivo HTML exato do zero usando a Template String limpa
-      // Isso ignora TUDO que o Tailwind e o Babel injetaram no navegador, garantindo perfeição.
       const cleanHTML = `<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -678,13 +668,11 @@ ${sTagClose}
     };
 
     const handlePrintPDF = () => {
-      // Garante tema claro durante impressão (visualmente, o CSS @media print já força)
       window.print();
     };
 
     const captureRef = useRef(null);
 
-    // Usa biblioteca html-to-image (muito superior para Tailwind)
     const handleExportPNG = async (action = 'download') => {
       const node = captureRef.current;
       if (!node) {
@@ -702,27 +690,24 @@ ${sTagClose}
 
       showToast('Gerando imagem limpa... (aguarde)', 'info');
       
-      // Temporariamente remove o dark mode para o print sair limpo com fundo claro
       const wasDark = document.documentElement.classList.contains('dark');
       if (wasDark) document.documentElement.classList.remove('dark');
       
       node.classList.add('capturing');
 
-      // Aguarda o React/Navegador aplicar a classe e redesenhar a tela
       await new Promise(r => setTimeout(r, 100));
 
       try {
         const blob = await window.htmlToImage.toBlob(node, {
           quality: 1,
-          pixelRatio: 2, // Maior resolução para não borrar
-          backgroundColor: '#f8fafc', // Fundo original (slate-50 do tailwind)
+          pixelRatio: 2,
+          backgroundColor: '#f8fafc',
           style: {
             margin: '0',
-            padding: '16px', // Espaçamento em volta pra ficar bonito
+            padding: '16px',
             borderRadius: '0',
           },
           filter: (domNode) => {
-            // Ignora botões de edição, lixeiras, barras de rolagem que tem classe no-print
             if (domNode.classList && domNode.classList.contains('no-print')) return false;
             return true;
           }
@@ -765,7 +750,6 @@ ${sTagClose}
       }
     };
 
-    // Gera texto formatado para WhatsApp
     const buildWhatsAppText = () => {
       let text = `*🎵 ESCALA — MINISTÉRIO DE LOUVOR*\n`;
       if (dates.length > 0) {
@@ -809,7 +793,6 @@ ${sTagClose}
         text += `\n`;
       });
 
-      // InDisponibilidade 🔋 ❌s
       const unavailLines = [];
       members.forEach(m => {
         const ud = dates.filter(d => isUnavailable(d.dateStr, m.id))
@@ -817,11 +800,10 @@ ${sTagClose}
         if (ud.length > 0) unavailLines.push(`• *${m.name}:* ${ud.join(', ')}`);
       });
       if (unavailLines.length > 0) {
-        text += `━━━━━━━━━━━━━━━\n\n*✗ INDisponibilidade 🔋 ❌S*\n\n`;
+        text += `━━━━━━━━━━━━━━━\n\n*✗ INDISPONIBILIDADES*\n\n`;
         text += unavailLines.join('\n') + '\n\n';
       }
 
-      // Balanceamento (apenas no range visível)
       text += `━━━━━━━━━━━━━━━\n\n*📊 BALANCEAMENTO* _(em ${stats.totalDays} ${stats.totalDays === 1 ? 'culto' : 'cultos'} visualizados)_\n\n`;
       stats.sorted.filter(m => m.count > 0).forEach(m => {
         const folgas = stats.totalDays - m.count;
@@ -847,15 +829,11 @@ ${sTagClose}
         }
         throw new Error('Clipboard API indisponível');
       } catch (e) {
-        // Fallback: abre modal pro usuário copiar manualmente
         setShowTextModal(text);
         showToast('Selecione e copie manualmente', 'info');
       }
     };
 
-    // ================================================================
-    // CONTROLES DE DATA (header de cada aba)
-    // ================================================================
     const renderDateControls = (label, extra) => (
       <div className="flex flex-wrap items-center justify-between gap-3 mb-6 no-print">
         <div className="flex flex-wrap items-center gap-3">
@@ -908,7 +886,6 @@ ${sTagClose}
           </div>
         )}
 
-        {/* Conflitos */}
         {conflicts.length > 0 && (
           <div className="bg-rose-50 border border-rose-200 rounded-xl p-4 no-print">
             <div className="flex items-start gap-3">
@@ -929,7 +906,6 @@ ${sTagClose}
           </div>
         )}
 
-        {/* Cards de métricas */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
           <button
             onClick={() => editMode ? setShowAddEventModal(true) : null}
@@ -977,11 +953,10 @@ ${sTagClose}
                 {conflicts.length > 0 ? <AlertTriangle size={20} /> : <CheckCircle2 size={20} />}
               </div>
             </div>
-            <p className={`text-xs mt-2 ${conflicts.length > 0 ? 'text-rose-600' : 'text-emerald-600'}`}>{conflicts.length > 0 ? 'Resolver agora' : 'Ver Disponibilidade 🔋 ❌'}</p>
+            <p className={`text-xs mt-2 ${conflicts.length > 0 ? 'text-rose-600' : 'text-emerald-600'}`}>{conflicts.length > 0 ? 'Resolver agora' : 'Ver Disponibilidade'}</p>
           </button>
         </div>
 
-        {/* ÁREA CAPTURÁVEL: 3 páginas (Escala / Disponibilidade 🔋 ❌ / Balanceamento) */}
         <div ref={captureRef} id="print-area" className="space-y-6 bg-slate-50 rounded-xl p-4 md:p-6">
 
           {/* ============ PÁGINA 1 — ESCALA ============ */}
@@ -1083,7 +1058,7 @@ ${sTagClose}
 
           <div className="h-8"></div> {/* Spacer visual entre sessoes */}
 
-          {/* ============ PÁGINA 2 — Disponibilidade 🔋 ❌ ============ */}
+          {/* ============ PÁGINA 2 — Disponibilidade ============ */}
           <div className="print-page space-y-3">
             <div className="flex items-center justify-between border-b-2 border-emerald-600 pb-3 avoid-break">
               <div className="flex items-center gap-3">
@@ -1091,7 +1066,7 @@ ${sTagClose}
                   <CalendarCheck size={20} />
                 </div>
                 <div>
-                  <h2 className="font-bold text-xl text-slate-800">Disponibilidade 🔋 ❌</h2>
+                  <h2 className="font-bold text-xl text-slate-800">Disponibilidade</h2>
                   <p className="text-xs text-slate-500">✓ disponível • ✗ indisponível • ● escalado • ⚠ conflito</p>
                 </div>
               </div>
@@ -1208,7 +1183,7 @@ ${sTagClose}
     );
 
     // ================================================================
-    // Disponibilidade 🔋 ❌
+    // DISPONIBILIDADE
     // ================================================================
     const filteredMembers = useMemo(() => {
       const q = memberSearch.trim().toLowerCase();
@@ -1218,7 +1193,7 @@ ${sTagClose}
 
     const renderAvailability = () => (
       <div className="space-y-6 animate-fade-in">
-        {renderDateControls("Disponibilidade 🔋 ❌",
+        {renderDateControls("Disponibilidade",
           editMode ? (
             <button onClick={() => setShowAddEventModal(true)} className="flex items-center gap-2 bg-emerald-600 text-white px-3 py-2 rounded-lg text-sm font-medium hover:bg-emerald-700 transition shadow">
               <CalendarPlus size={16} /> Adicionar Data
@@ -1562,7 +1537,7 @@ ${sTagClose}
           </div>
           <nav className="p-4 space-y-1">
             <SidebarItem icon="Calendar" label="Visão Geral" id="dashboard" />
-            <SidebarItem icon="CalendarCheck" label="Disponibilidade 🔋 ❌" id="availability" />
+            <SidebarItem icon="CalendarCheck" label="Disponibilidade" id="availability" />
             <SidebarItem icon="Users" label="Montar Escala" id="schedule" />
             <SidebarItem icon="Users" label="Membros" id="members" />
             <SidebarItem icon="Tags" label="Categorias" id="categories" />
@@ -1586,7 +1561,7 @@ ${sTagClose}
             </div>
             <nav className="space-y-2">
               <SidebarItem icon="Calendar" label="Visão Geral" id="dashboard" />
-              <SidebarItem icon="CalendarCheck" label="Disponibilidade 🔋 ❌" id="availability" />
+              <SidebarItem icon="CalendarCheck" label="Disponibilidade" id="availability" />
               <SidebarItem icon="Users" label="Montar Escala" id="schedule" />
               <SidebarItem icon="Users" label="Membros" id="members" />
               <SidebarItem icon="Tags" label="Categorias" id="categories" />
