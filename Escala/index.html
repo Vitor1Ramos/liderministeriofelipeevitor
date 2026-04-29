@@ -1645,13 +1645,6 @@ ${sTagClose}
         )}
       </div>
     );
-      // --- CONTROLE DO BOTÃO VOLTAR ---
-            const btnVoltar = document.querySelector('.btn-voltar');
-            const referrer = document.referrer;
-            const currentHost = window.location.hostname;
-            
-            if (btnVoltar && (!referrer || !referrer.includes(currentHost))) {
-                btnVoltar.style.display = 'none';
   }
 
   ReactDOM.createRoot(document.getElementById('root')).render(React.createElement(MinistryScheduler));
