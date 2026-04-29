@@ -87,23 +87,7 @@
         .brand-name span { color: var(--text-3); font-weight: 700;}
         .header-pill { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: #fff; font-size: 12px; font-weight: 600; padding: 5px 12px; border-radius: 20px; letter-spacing: 0.5px; text-transform: uppercase; }
 
-        /* Fundo removido e ajustado para a cor principal de fundo */
-        .hero { padding: 56px 48px 48px; position: relative; overflow: hidden; background-color: transparent; }
-        .hero-content { position: relative; z-index: 1; max-width: 1200px; margin: 0 auto; }
-        
-        /* Textos e chips ajustados para preto/cinza */
-        .hero-label { display: inline-flex; align-items: center; gap: 8px; background: rgba(0,0,0,0.05); border: 1px solid var(--border-strong); color: var(--black); font-size: 11px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; padding: 5px 12px; border-radius: 20px; margin-bottom: 20px; }
-        .hero h1 { font-family: var(--font-display); font-size: clamp(28px, 4vw, 42px); font-weight: 800; color: var(--black); line-height: 1.15; margin-bottom: 12px; }
-        .hero h1 em { font-style: normal; color: var(--text-3); }
-        .hero p { color: var(--text-2); font-size: 15px; line-height: 1.6; max-width: 500px; margin-bottom: 32px; font-weight: 500; }
-
-        .stats-row { display: flex; gap: 24px; flex-wrap: wrap; }
-        .stat-chip { display: flex; align-items: center; gap: 10px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 10px 16px; box-shadow: var(--shadow-sm); }
-        .stat-chip i { font-size: 18px; color: var(--black); }
-        .stat-num { font-family: var(--font-display); font-size: 18px; font-weight: 800; color: var(--black); line-height: 1; }
-        .stat-label { font-size: 11px; color: var(--text-2); font-weight: 500; margin-top: 2px; text-transform: uppercase; letter-spacing: 0.5px; }
-
-        main { flex: 1; padding: 10px 48px 60px; max-width: 1200px; margin: 0 auto; width: 100%; }
+        main { flex: 1; padding: 40px 48px 60px; max-width: 1200px; margin: 0 auto; width: 100%; }
 
         .section-label { font-size: 11px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: var(--text-3); margin-bottom: 16px; }
         .tools-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 24px; }
@@ -154,10 +138,8 @@
 
         @media (max-width: 768px) {
             header { padding: 0 20px; }
-            .hero  { padding: 36px 20px 32px; }
-            main   { padding: 10px 20px 60px; }
+            main   { padding: 32px 20px 60px; }
             .tools-grid { grid-template-columns: 1fr; }
-            .stats-row { gap: 12px; }
             footer { flex-direction: column; gap: 12px; text-align: center; }
         }
     </style>
@@ -175,37 +157,6 @@
         <span class="header-pill">Igreja Batista El Shaddai</span>
     </div>
 </header>
-
-<div class="hero">
-    <div class="hero-content">
-        <div class="hero-label"><i class="ph-fill ph-microphone-stage"></i> Central de Informações</div>
-        <h1>Hub do <em>Ministério de Louvor</em></h1>
-        <p>Acesse todas as escalas, repertórios e ferramentas da equipe em um único lugar. Organização e excelência para o Reino.</p>
-        <div class="stats-row">
-            <div class="stat-chip">
-                <i class="ph-fill ph-folders"></i>
-                <div class="stat-chip-info">
-                    <span class="stat-num" id="total-count">6</span>
-                    <span class="stat-label">Módulos</span>
-                </div>
-            </div>
-            <div class="stat-chip">
-                <i class="ph-fill ph-users-three"></i>
-                <div class="stat-chip-info">
-                    <span class="stat-num">Ativo</span>
-                    <span class="stat-label">Equipe</span>
-                </div>
-            </div>
-            <div class="stat-chip">
-                <i class="ph-fill ph-calendar"></i>
-                <div class="stat-chip-info">
-                    <span class="stat-num" id="last-update">2026</span>
-                    <span class="stat-label">Ano Vigente</span>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
 
 <main>
     <div class="section-label">Painéis Disponíveis</div>
@@ -303,10 +254,6 @@
     <span class="footer-copy">&copy; 2026 Ministério de Louvor - Igreja Batista El Shaddai.</span>
     <span class="footer-badge"><i class="ph-fill ph-hands-praying"></i> Servindo com excelência</span>
 </footer>
-
-<script>
-    document.getElementById('last-update').textContent = new Date().getFullYear();
-</script>
 
 </body>
 </html>
