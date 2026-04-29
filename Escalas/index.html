@@ -840,7 +840,7 @@ ${sTagClose}
 
         {/* Cards de métricas */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
-          <div className="bg-slate-900 rounded-xl p-4 md:p-5 text-white shadow-lg">
+          <button onClick={() => setShowAddEventModal(true)} className="text-left bg-slate-900 rounded-xl p-4 md:p-5 text-white shadow-lg hover:bg-slate-800 hover:-translate-y-1 transition-all cursor-pointer focus:outline-none focus:ring-2 focus:ring-slate-500">
             <div className="flex justify-between items-start">
               <div>
                 <p className="text-slate-300 text-xs md:text-sm font-medium mb-1">Cultos</p>
@@ -848,9 +848,10 @@ ${sTagClose}
               </div>
               <div className="bg-white/20 p-2 rounded-lg"><Calendar size={20} /></div>
             </div>
-            <p className="text-xs text-slate-300 mt-2">Visualizando</p>
-          </div>
-          <div className="bg-white rounded-xl p-4 md:p-5 border shadow-sm">
+            <p className="text-xs text-slate-300 mt-2">Clique para adicionar</p>
+          </button>
+
+          <button onClick={() => setActiveTab('members')} className="text-left bg-white rounded-xl p-4 md:p-5 border shadow-sm hover:border-indigo-300 hover:shadow-md hover:-translate-y-1 transition-all cursor-pointer focus:outline-none focus:ring-2 focus:ring-indigo-500">
             <div className="flex justify-between items-start">
               <div>
                 <p className="text-slate-500 text-xs md:text-sm font-medium mb-1">Membros</p>
@@ -858,9 +859,10 @@ ${sTagClose}
               </div>
               <div className="bg-rose-50 text-rose-600 p-2 rounded-lg"><Users size={20} /></div>
             </div>
-            <p className="text-xs text-slate-400 mt-2">Ativos</p>
-          </div>
-          <div className="bg-white rounded-xl p-4 md:p-5 border shadow-sm">
+            <p className="text-xs text-slate-400 mt-2">Gerenciar equipe</p>
+          </button>
+
+          <button onClick={() => setActiveTab('categories')} className="text-left bg-white rounded-xl p-4 md:p-5 border shadow-sm hover:border-amber-300 hover:shadow-md hover:-translate-y-1 transition-all cursor-pointer focus:outline-none focus:ring-2 focus:ring-amber-500">
             <div className="flex justify-between items-start">
               <div>
                 <p className="text-slate-500 text-xs md:text-sm font-medium mb-1">Funções</p>
@@ -868,9 +870,10 @@ ${sTagClose}
               </div>
               <div className="bg-amber-50 text-amber-600 p-2 rounded-lg"><Tags size={20} /></div>
             </div>
-            <p className="text-xs text-slate-400 mt-2">Categorias</p>
-          </div>
-          <div className={`rounded-xl p-4 md:p-5 border shadow-sm ${conflicts.length > 0 ? 'bg-rose-50 border-rose-200' : 'bg-emerald-50 border-emerald-200'}`}>
+            <p className="text-xs text-slate-400 mt-2">Gerenciar categorias</p>
+          </button>
+
+          <button onClick={() => setActiveTab('availability')} className={`text-left rounded-xl p-4 md:p-5 border shadow-sm hover:shadow-md hover:-translate-y-1 transition-all cursor-pointer focus:outline-none focus:ring-2 ${conflicts.length > 0 ? 'bg-rose-50 border-rose-200 hover:border-rose-400 focus:ring-rose-500' : 'bg-emerald-50 border-emerald-200 hover:border-emerald-400 focus:ring-emerald-500'}`}>
             <div className="flex justify-between items-start">
               <div>
                 <p className={`text-xs md:text-sm font-medium mb-1 ${conflicts.length > 0 ? 'text-rose-700' : 'text-emerald-700'}`}>Conflitos</p>
@@ -880,8 +883,8 @@ ${sTagClose}
                 {conflicts.length > 0 ? <AlertTriangle size={20} /> : <CheckCircle2 size={20} />}
               </div>
             </div>
-            <p className={`text-xs mt-2 ${conflicts.length > 0 ? 'text-rose-600' : 'text-emerald-600'}`}>{conflicts.length > 0 ? 'Verificar escala' : 'Tudo certo!'}</p>
-          </div>
+            <p className={`text-xs mt-2 ${conflicts.length > 0 ? 'text-rose-600' : 'text-emerald-600'}`}>{conflicts.length > 0 ? 'Resolver agora' : 'Ver disponibilidade'}</p>
+          </button>
         </div>
 
         {/* ÁREA CAPTURÁVEL: 3 páginas (Escala / Disponibilidade / Balanceamento) */}
