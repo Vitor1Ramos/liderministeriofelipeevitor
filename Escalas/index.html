@@ -132,7 +132,8 @@
     StickyNote = createIcon('StickyNote'), Share2 = createIcon('Share2'),
     Sparkles = createIcon('Sparkles'), Eye = createIcon('Eye'),
     Sun = createIcon('Sun'), Moon = createIcon('Moon'), FileText = createIcon('FileText'),
-    Lock = createIcon('Lock'), LockOpen = createIcon('LockOpen');
+    Lock = createIcon('Lock'), LockOpen = createIcon('LockOpen'),
+    Home = createIcon('Home');
 
   // ====================================================================
   // DADOS - DATA_HOLDER (não remover comentários)
@@ -1576,6 +1577,14 @@ ${sTagClose}
               <h2 className="font-bold text-lg hidden md:block">Ministério de Louvor</h2>
             </div>
             <div className="flex items-center gap-2">
+              <button
+                onClick={() => setActiveTab('dashboard')}
+                className={`w-9 h-9 flex items-center justify-center rounded-lg border transition shadow-sm ${activeTab === 'dashboard'
+                  ? 'bg-indigo-600 text-white border-indigo-600 hover:bg-indigo-700'
+                  : 'bg-white text-slate-700 hover:bg-slate-50'}`}
+                title="Voltar para Visão Geral">
+                <Home size={16} />
+              </button>
               <button
                 onClick={handleToggleLock}
                 className={`w-9 h-9 flex items-center justify-center rounded-lg border transition shadow-sm ${editMode
