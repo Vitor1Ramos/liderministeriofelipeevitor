@@ -1505,6 +1505,18 @@ ${sTagClose}
               {activeTab === 'categories' && renderCategories()}
             </div>
           </div>
+
+          {/* BOTÃO FIXO NO RODAPÉ */}
+          <footer className="p-4 md:px-8 border-t bg-white shrink-0 no-print">
+            <button
+              onClick={() => window.location.href = 'https://vitor1ramos.github.io/liderministeriofelipeevitor'}
+              className="flex items-center gap-2 bg-slate-900 text-white px-5 py-2.5 rounded-lg shadow-sm font-medium hover:bg-slate-800 transition"
+              title="Voltar para a página inicial"
+            >
+              <ChevronLeft size={18} />
+              Voltar
+            </button>
+          </footer>
         </main>
 
         {/* MODAL: Adicionar Evento */}
@@ -1631,31 +1643,18 @@ ${sTagClose}
         )}
 
         {/* TOAST */}
-{toast && (
-<div className={`fixed bottom-6 left-1/2 -translate-x-1/2 z-[60] px-4 py-3 rounded-lg shadow-2xl toast-enter no-print ${
-toast.type === 'error' ? 'bg-rose-600 text-white' :
-toast.type === 'info' ? 'bg-slate-800 text-white' :
-'bg-emerald-600 text-white'
-}`}>
-
-<div className="flex items-center gap-2 text-sm font-medium">
-{toast.type === 'error' ? <AlertTriangle size={16} /> : toast.type === 'info' ? <Sparkles size={16} /> : <CheckCircle2 size={16} />}
-{toast.msg}
-</div>
-</div>
-
-)}
-{/* BOTÃO VOLTAR PARA A PÁGINA INICIAL */}
-        <div className="mt-8 no-print flex justify-start">
-          <button
-            onClick={() => window.location.href = 'https://vitor1ramos.github.io/liderministeriofelipeevitor'}
-            className="flex items-center gap-2 bg-slate-900 text-white px-5 py-2.5 rounded-lg shadow-sm font-medium hover:bg-slate-800 transition"
-            title="Voltar para a página inicial"
-          >
-            <ChevronLeft size={18} />
-            Voltar
-          </button>
-        </div>
+        {toast && (
+          <div className={`fixed bottom-6 left-1/2 -translate-x-1/2 z-[60] px-4 py-3 rounded-lg shadow-2xl toast-enter no-print ${
+            toast.type === 'error' ? 'bg-rose-600 text-white' :
+            toast.type === 'info' ? 'bg-slate-800 text-white' :
+            'bg-emerald-600 text-white'
+          }`}>
+            <div className="flex items-center gap-2 text-sm font-medium">
+              {toast.type === 'error' ? <AlertTriangle size={16} /> : toast.type === 'info' ? <Sparkles size={16} /> : <CheckCircle2 size={16} />}
+              {toast.msg}
+            </div>
+          </div>
+        )}
 
       </div>
     );
