@@ -1631,23 +1631,65 @@ ${sTagClose}
         )}
 
         {/* TOAST */}
-        {toast && (
-          <div className={`fixed bottom-6 left-1/2 -translate-x-1/2 z-[60] px-4 py-3 rounded-lg shadow-2xl toast-enter no-print ${
-            toast.type === 'error' ? 'bg-rose-600 text-white' :
-            toast.type === 'info' ? 'bg-slate-800 text-white' :
-            'bg-emerald-600 text-white'
-          }`}>
-            <div className="flex items-center gap-2 text-sm font-medium">
-              {toast.type === 'error' ? <AlertTriangle size={16} /> : toast.type === 'info' ? <Sparkles size={16} /> : <CheckCircle2 size={16} />}
-              {toast.msg}
-            </div>
-          </div>
-        )}
-      </div>
-    );
-  }
 
-  ReactDOM.createRoot(document.getElementById('root')).render(React.createElement(MinistryScheduler));
+{toast && (
+
+<div className={`fixed bottom-6 left-1/2 -translate-x-1/2 z-[60] px-4 py-3 rounded-lg shadow-2xl toast-enter no-print ${
+
+toast.type === 'error' ? 'bg-rose-600 text-white' :
+
+toast.type === 'info' ? 'bg-slate-800 text-white' :
+
+'bg-emerald-600 text-white'
+
+}`}>
+
+<div className="flex items-center gap-2 text-sm font-medium">
+
+{toast.type === 'error' ? <AlertTriangle size={16} /> : toast.type === 'info' ? <Sparkles size={16} /> : <CheckCircle2 size={16} />}
+
+{toast.msg}
+
+</div>
+
+</div>
+
+)}
+
+
+
+{/* BOTÃO VOLTAR FLUTUANTE */}
+
+<button
+
+  onClick={() => window.history.back()}
+
+  className="fixed bottom-6 left-6 z-[60] flex items-center gap-2 bg-slate-900 text-white px-4 py-2.5 rounded-lg shadow-xl font-medium hover:bg-slate-800 transition no-print"
+
+  title="Voltar à página anterior"
+
+>
+
+  <ChevronLeft size={18} />
+
+  Voltar
+
+</button>
+
+
+
+</div>
+
+);
+
+}
+
+
+
+ReactDOM.createRoot(document.getElementById('root')).render(React.createElement(MinistryScheduler));
+
 </script>
+
 </body>
+
 </html>
