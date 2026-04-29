@@ -1,0 +1,1653 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LouvorApp - Ministério de Louvor</title>
+<script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = { darkMode: 'class' };
+</script>
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html-to-image/1.11.11/html-to-image.min.js"></script>
+<style id="app-style">
+  body { font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+
+  /* ==================== PRINT / PDF (3 PÁGINAS) ==================== */
+  @media print {
+    @page { size: A4 portrait; margin: 1.2cm; }
+    html, body { background: white !important; height: auto !important; overflow: visible !important; }
+    body { color: #0f172a !important; }
+    .no-print { display: none !important; }
+
+    /* Reset layout do app pra fluir naturalmente */
+    .app-shell { display: block !important; height: auto !important; overflow: visible !important; }
+    .app-main { display: block !important; height: auto !important; overflow: visible !important; }
+    .app-content { height: auto !important; overflow: visible !important; padding: 0 !important; }
+    .max-w-7xl { max-width: 100% !important; }
+
+    /* Quebras de página */
+    .print-page { page-break-after: always; break-after: page; padding-top: 0 !important; }
+    .print-page:last-child { page-break-after: auto; break-after: auto; }
+    .print-card { box-shadow: none !important; border: 1px solid #cbd5e1 !important; break-inside: avoid; }
+    .avoid-break { break-inside: avoid; page-break-inside: avoid; }
+
+    /* Forçar tema claro para impressão */
+    html.dark * { color-scheme: light !important; }
+    html.dark .bg-white,
+    html.dark .bg-slate-50,
+    html.dark .bg-slate-100,
+    html.dark .bg-slate-800 { background-color: white !important; }
+    /* bg-slate-900 NÃO é convertida: é cor intencional dos cards de Domingo */
+    html.dark, html.dark * { color: #0f172a !important; border-color: #cbd5e1 !important; }
+    html.dark .text-slate-100, html.dark .text-slate-200, html.dark .text-slate-300,
+    html.dark .text-slate-400, html.dark .text-slate-500, html.dark .text-slate-600,
+    html.dark .text-slate-700, html.dark .text-slate-800, html.dark .text-slate-900 { color: #1e293b !important; }
+  }
+
+  /* ==================== DARK MODE (override de classes Tailwind) ==================== */
+  html.dark { color-scheme: dark; }
+  html.dark body { background-color: #0f172a; color: #e2e8f0; }
+  html.dark .bg-white { background-color: #1e293b !important; }
+  html.dark .bg-slate-50 { background-color: #0f172a !important; }
+  html.dark .bg-slate-100 { background-color: #334155 !important; }
+  html.dark .text-slate-800, html.dark .text-slate-700 { color: #f1f5f9 !important; }
+  html.dark .text-slate-600 { color: #cbd5e1 !important; }
+  html.dark .text-slate-500, html.dark .text-slate-400 { color: #94a3b8 !important; }
+  html.dark [class*=" border-"], html.dark [class^="border-"], html.dark .border { border-color: #334155 !important; }
+  html.dark input, html.dark select, html.dark textarea { background-color: #0f172a !important; color: #f1f5f9 !important; border-color: #334155 !important; }
+  html.dark thead.bg-slate-50, html.dark thead.bg-slate-100 { background-color: #334155 !important; }
+  html.dark .hover\:bg-slate-50:hover, html.dark .hover\:bg-slate-100:hover { background-color: #334155 !important; }
+  html.dark .bg-indigo-50 { background-color: rgba(99,102,241,0.15) !important; }
+  html.dark .bg-rose-50 { background-color: rgba(244,63,94,0.15) !important; }
+  html.dark .bg-emerald-50 { background-color: rgba(16,185,129,0.15) !important; }
+  html.dark .bg-amber-50 { background-color: rgba(251,191,36,0.15) !important; }
+  html.dark .text-amber-800, html.dark .text-amber-900 { color: #fcd34d !important; }
+  html.dark .ring-2 { box-shadow: 0 0 0 2px rgba(99,102,241,0.5) !important; }
+
+  /* Smooth animations */
+  @keyframes fade-in { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+  .animate-fade-in { animation: fade-in 300ms ease-out; }
+
+  /* Custom scrollbar */
+  ::-webkit-scrollbar { width: 8px; height: 8px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+  ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+  html.dark ::-webkit-scrollbar-thumb { background: #475569; }
+
+  /* Toast */
+  .toast-enter { animation: toast-in 250ms ease-out; }
+  @keyframes toast-in { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+  /* Capture area fix */
+  .capturing { 
+    background-color: #f8fafc !important; /* Tailwind slate-50 */
+    border-radius: 0 !important;
+  }
+  .capturing .overflow-x-auto { overflow: visible !important; }
+  /* Remove scrollbars during capture */
+  .capturing ::-webkit-scrollbar { display: none; }
+</style>
+</head>
+<body class="bg-slate-50 text-slate-800">
+<div id="root"></div>
+<script type="text/babel" data-presets="react" id="app-script">
+  const { useState, useMemo, useEffect, useRef } = React;
+
+  // ====================================================================
+  // ÍCONES (lucide)
+  // ====================================================================
+  const createIcon = (name) => (props) => {
+    const iconData = window.lucide && window.lucide.icons && window.lucide.icons[name];
+    if (!iconData) return React.createElement('span', null, '');
+    return React.createElement('svg', {
+      ...props,
+      width: props.size || 24, height: props.size || 24,
+      fill: 'none', stroke: props.color || 'currentColor',
+      strokeWidth: props.strokeWidth || 2,
+      strokeLinecap: 'round', strokeLinejoin: 'round',
+      viewBox: '0 0 24 24',
+      xmlns: 'http://www.w3.org/2000/svg', // <-- CRÍTICO PARA FUNCIONAR NA CAPTURA DE IMAGEM
+      dangerouslySetInnerHTML: {
+        __html: iconData.map(c => `<${c[0]} ${Object.entries(c[1]).map(([k, v]) => `${k}="${v}"`).join(' ')} />`).join('')
+      }
+    });
+  };
+  const Calendar = createIcon('Calendar'), CalendarCheck = createIcon('CalendarCheck'),
+    CalendarPlus = createIcon('CalendarPlus'), Users = createIcon('Users'),
+    Music = createIcon('Music'), CheckCircle2 = createIcon('CheckCircle2'),
+    AlertTriangle = createIcon('AlertTriangle'), Menu = createIcon('Menu'),
+    X = createIcon('X'), Download = createIcon('Download'),
+    Trash2 = createIcon('Trash2'), PlusCircle = createIcon('PlusCircle'),
+    Save = createIcon('Save'), Pencil = createIcon('Pencil'),
+    Check = createIcon('Check'), Tags = createIcon('Tags'),
+    Plus = createIcon('Plus'), ChevronLeft = createIcon('ChevronLeft'),
+    ChevronRight = createIcon('ChevronRight'), Printer = createIcon('Printer'),
+    ImageIcon = createIcon('Image'), Copy = createIcon('Copy'),
+    Search = createIcon('Search'), BarChart3 = createIcon('BarChart3'),
+    StickyNote = createIcon('StickyNote'), Share2 = createIcon('Share2'),
+    Sparkles = createIcon('Sparkles'), Eye = createIcon('Eye'),
+    Sun = createIcon('Sun'), Moon = createIcon('Moon'), FileText = createIcon('FileText');
+
+  // ====================================================================
+  // DADOS - DATA_HOLDER (não remover comentários)
+  // ====================================================================
+  // DATA_HOLDER_START
+  const DATA_B64 = "eyJyb2xlcyI6eyJWT0NBTCI6eyJsYWJlbCI6IlZvY2FsIiwiY29sb3IiOiJiZy1yb3NlLTYwMCB0ZXh0LXdoaXRlIn0sIlRFQ0xBRE8iOnsibGFiZWwiOiJUZWNsYWRvIiwiY29sb3IiOiJiZy1ibHVlLTYwMCB0ZXh0LXdoaXRlIn0sIlZJT0xBTyI6eyJsYWJlbCI6IlZpb2zDo28iLCJjb2xvciI6ImJnLWFtYmVyLTYwMCB0ZXh0LXdoaXRlIn0sIkdVSVRBUlJBIjp7ImxhYmVsIjoiR3VpdGFycmEiLCJjb2xvciI6ImJnLW9yYW5nZS02MDAgdGV4dC13aGl0ZSJ9LCJCQUlYTyI6eyJsYWJlbCI6IkJhaXhvIiwiY29sb3IiOiJiZy1jeWFuLTYwMCB0ZXh0LXdoaXRlIn0sIkJBVEVSSUEiOnsibGFiZWwiOiJCYXRlcmlhIiwiY29sb3IiOiJiZy1lbWVyYWxkLTYwMCB0ZXh0LXdoaXRlIn0sIlNPTSI6eyJsYWJlbCI6IlNvbSIsImNvbG9yIjoiYmctc2xhdGUtNjAwIHRleHQtd2hpdGUifSwiTUlESUEiOnsibGFiZWwiOiJNw61kaWEiLCJjb2xvciI6ImJnLXB1cnBsZS02MDAgdGV4dC13aGl0ZSJ9LCJURUNOSUNPIjp7ImxhYmVsIjoiVMOpY25pY28iLCJjb2xvciI6ImJnLXBpbmstNjAwIHRleHQtd2hpdGUifSwiTUlOSVNUUk8iOnsibGFiZWwiOiJNaW5pc3RybyIsImNvbG9yIjoiYmcteWVsbG93LTYwMCB0ZXh0LXdoaXRlIn0sIkxJREVSIjp7ImxhYmVsIjoiTMOtZGVyIiwiY29sb3IiOiJiZy1saW1lLTYwMCB0ZXh0LXdoaXRlIn19LCJtZW1iZXJzIjpbeyJpZCI6MSwibmFtZSI6IlZpdG9yIiwicm9sZXMiOlsiVk9DQUwiLCJCQVRFUklBIiwiVEVDTEFETyIsIk1JTklTVFJPIiwiU09NIiwiVklPTEFPIl19LHsiaWQiOjIsIm5hbWUiOiJBZHJpYW5hIiwicm9sZXMiOlsiVk9DQUwiLCJNSU5JU1RSTyJdfSx7ImlkIjozLCJuYW1lIjoiRi5WaW5pIiwicm9sZXMiOlsiVk9DQUwiLCJHVUlUQVJSQSIsIlNPTSIsIk1JTklTVFJPIl19LHsiaWQiOjQsIm5hbWUiOiJNaWxlbmEiLCJyb2xlcyI6WyJWT0NBTCIsIk1JTklTVFJPIl19LHsiaWQiOjUsIm5hbWUiOiJMZWFuZHJvIiwicm9sZXMiOlsiQkFJWE8iLCJWT0NBTCIsIk1JTklTVFJPIiwiVklPTEFPIl19LHsiaWQiOjYsIm5hbWUiOiJMb3JlbmEiLCJyb2xlcyI6WyJCQVRFUklBIl19LHsiaWQiOjcsIm5hbWUiOiJEw6lib3JhIiwicm9sZXMiOlsiVk9DQUwiLCJNSU5JU1RSTyJdfSx7ImlkIjo4LCJuYW1lIjoiR2lvdmFuYSIsInJvbGVzIjpbIkJBSVhPIl19LHsiaWQiOjksIm5hbWUiOiJSdWFuIiwicm9sZXMiOlsiQkFURVJJQSIsIkJBSVhPIl19LHsiaWQiOjEwLCJuYW1lIjoiQnJ1bm8iLCJyb2xlcyI6WyJNSURJQSIsIlNPTSJdfSx7ImlkIjoxMSwibmFtZSI6IkFtYW5kYSIsInJvbGVzIjpbIlNPTSJdfSx7ImlkIjoxMiwibmFtZSI6IkVsaV9GIiwicm9sZXMiOlsiVk9DQUwiLCJWSU9MQU8iLCJTT00iXX0seyJpZCI6MTMsIm5hbWUiOiJKb8OjbyIsInJvbGVzIjpbIlRFQ0xBRE8iXX0seyJpZCI6MTYsIm5hbWUiOiJGb2xnYSDwn5OMIiwicm9sZXMiOlsiVEVDTEFETyIsIlZJT0xBTyIsIkdVSVRBUlJBIiwiQkFJWE8iXX0seyJpZCI6MTcsIm5hbWUiOiIoRGVzZW52b2x2ZSspSXNhYmVsbHkiLCJyb2xlcyI6WyJWT0NBTCJdfSx7ImlkIjoxOCwibmFtZSI6IihEZXNlbnZvbHZlKylLZXRseW4iLCJyb2xlcyI6WyJWT0NBTCJdfSx7ImlkIjoxOSwibmFtZSI6IihEZXNlbnZvbHZlKylBbcOpcmljbyIsInJvbGVzIjpbIlZPQ0FMIiwiVklPTEFPIl19LHsiaWQiOjIwLCJuYW1lIjoiKERlc2Vudm9sdmUrKVNhbG9tw6NvIiwicm9sZXMiOlsiQkFURVJJQSJdfSx7ImlkIjoyMSwibmFtZSI6IihEZXNlbnZvbHZlKylBcnRodXIiLCJyb2xlcyI6WyJCQVRFUklBIl19LHsiaWQiOjIyLCJuYW1lIjoiVm9sdW50YXJpbyIsInJvbGVzIjpbIk1JRElBIiwiVEVDTklDTyIsIlNPTSJdfV0sInVuYXZhaWxhYmlsaXR5Ijp7IjIwMjYtMDEtMjUiOlsyLDExLDZdLCIyMDI2LTAyLTAxIjpbMTFdLCIyMDI2LTAyLTA4IjpbMTEsNl0sIjIwMjYtMDItMTUiOlsxMSwyLDEsN10sIjIwMjYtMDItMjIiOlsxMV0sIjIwMjYtMDMtMDgiOlszLDQsNyw4LDEwLDExXSwiMjAyNi0wMy0wMSI6WzgsMTIsMTFdLCIyMDI2LTAzLTE1IjpbOCwxMV0sIjIwMjYtMDMtMjkiOls3LDEyLDExXSwiMjAyNi0wMy0yMiI6WzExXSwiMjAyNi0wNC0xMiI6WzQsOSw4LDddLCIyMDI2LTA1LTAzIjpbMSwyLDUsNiw3XSwiMjAyNi0wNS0xMCI6WzMsNCwxM10sIjIwMjYtMDUtMTciOlsxMiw1XSwiMjAyNi0wNS0yNCI6WzhdLCIyMDI2LTA1LTMxIjpbOCwxMiw3XX0sInJvc3RlciI6eyIyMDI2LTAxLTI1IjpbIjc6Vk9DQUwiLCI0OlZPQ0FMIiwiMTI6Vk9DQUwiLCIzOlZPQ0FMIiwiMTM6VEVDTEFETyIsIjEyOlZJT0xBTyIsIjM6R1VJVEFSUkEiLCI4OkJBSVhPIiwiOTpCQVRFUklBIiwiMTA6TUlESUEiLCIzOlNPTSIsIjEyOlNPTSIsIjc6TUlOSVNUUk8iXSwiMjAyNi0wMi0wMSI6WyIxOk1JTklTVFJPIiwiMTpWT0NBTCIsIjI6Vk9DQUwiLCI3OlZPQ0FMIiwiMzpWT0NBTCIsIjEzOlRFQ0xBRE8iLCIzOkdVSVRBUlJBIiwiNTpCQUlYTyIsIjY6QkFURVJJQSIsIjE6U09NIiwiMzpTT00iLCIxMDpNSURJQSJdLCIyMDI2LTAyLTA4IjpbIjQ6Vk9DQUwiLCI0Ok1JTklTVFJPIiwiMTQ6TUlESUEiLCIxMjpTT00iLCIzOlNPTSIsIjU6Vk9DQUwiLCIzOlZPQ0FMIiwiMjpWT0NBTCIsIjE6VEVDTEFETyIsIjEyOlZJT0xBTyIsIjM6R1VJVEFSUkEiLCI4OkJBSVhPIiwiOTpCQVRFUklBIl0sIjIwMjYtMDItMTUiOlsiNTpWT0NBTCIsIjEzOlRFQ0xBRE8iLCIxMjpWSU9MQU8iLCIzOkdVSVRBUlJBIiwiNDpWT0NBTCIsIjM6Vk9DQUwiLCIxMjpWT0NBTCIsIjU6QkFJWE8iLCI2OkJBVEVSSUEiLCIzOlNPTSIsIjEyOlNPTSIsIjEwOk1JRElBIiwiNTpNSU5JU1RSTyJdLCIyMDI2LTAyLTIyIjpbIjc6Vk9DQUwiLCIxOlZPQ0FMIiwiMjpWT0NBTCIsIjU6Vk9DQUwiLCIxMzpURUNMQURPIiwiMzpHVUlUQVJSQSIsIjg6QkFJWE8iLCI5OkJBVEVSSUEiLCIxOlNPTSIsIjEyOlNPTSIsIjEwOk1JRElBIiwiNTpNSU5JU1RSTyJdLCIyMDI2LTAzLTAxIjpbIjI6Vk9DQUwiLCIzOlZPQ0FMIiwiNTpWT0NBTCIsIjc6Vk9DQUwiLCIxMzpURUNMQURPIiwiMTI6VklPTEFPIiwiMzpHVUlUQVJSQSIsIjU6QkFJWE8iLCI2OkJBVEVSSUEiLCIxOlNPTSIsIjE0OlNPTSIsIjEwOk1JRElBIiwiNzpNSU5JU1RSTyJdLCIyMDI2LTAzLTA4IjpbIjE6Vk9DQUwiLCIyOlZPQ0FMIiwiNTpWT0NBTCIsIjEyOlZPQ0FMIiwiMTpURUNMQURPIiwiMTI6VklPTEFPIiwiMTY6R1VJVEFSUkEiLCIxNTpCQVRFUklBIiwiMTpTT00iLCIxNDpTT00iLCIxNDpNSURJQSIsIjk6QkFJWE8iLCIyOk1JTklTVFJPIl0sIjIwMjYtMDMtMTUiOlsiNzpWT0NBTCIsIjEyOlZPQ0FMIiwiNTpWT0NBTCIsIjQ6Vk9DQUwiLCIxOlRFQ0xBRE8iLCIxMjpWSU9MQU8iLCIzOkdVSVRBUlJBIiwiNTpCQUlYTyIsIjk6QkFURVJJQSIsIjM6U09NIiwiMTQ6U09NIiwiMTA6TUlESUEiLCI1Ok1JTklTVFJPIl0sIjIwMjYtMDMtMjIiOlsiMzpWT0NBTCIsIjQ6Vk9DQUwiLCI1OlZPQ0FMIiwiNzpWT0NBTCIsIjEzOlRFQ0xBRE8iLCIzOkdVSVRBUlJBIiwiODpCQUlYTyIsIjY6QkFURVJJQSIsIjM6U09NIiwiMTA6TUlESUEiLCI0Ok1JTklTVFJPIiwiNTpWSU9MQU8iLCIxNDpTT00iXSwiMjAyNi0wMy0yOSI6WyIxOlZPQ0FMIiwiMjpWT0NBTCIsIjQ6Vk9DQUwiLCI1OlZPQ0FMIiwiMTM6VEVDTEFETyIsIjM6R1VJVEFSUkEiLCIxOlZJT0xBTyIsIjg6QkFJWE8iLCI5OkJBVEVSSUEiLCIxOlNPTSIsIjM6U09NIiwiMTpNSU5JU1RSTyIsIjE0Ok1JRElBIl0sIjIwMjYtMDQtMTIiOlsiMzpHVUlUQVJSQSIsIjU6QkFJWE8iLCIxMjpWT0NBTCIsIjI6Vk9DQUwiLCIxOlZPQ0FMIiwiMTM6VEVDTEFETyIsIjEyOlZJT0xBTyIsIjU6Vk9DQUwiLCI2OkJBVEVSSUEiLCIxMDpNSURJQSIsIjE0OlNPTSIsIjE6U09NIiwiMTpNSU5JU1RSTyJdLCIyMDI2LTA0LTE5IjpbIjI6Vk9DQUwiLCIzOkdVSVRBUlJBIiwiOTpCQVRFUklBIiwiNDpWT0NBTCIsIjE6Vk9DQUwiLCIzOlZPQ0FMIiwiMTM6VEVDTEFETyIsIjU6QkFJWE8iLCIxMDpTT00iLCIxNDpTT00iLCIxMDpNSURJQSIsIjE0Ok1JRElBIiwiMTpNSU5JU1RSTyJdLCIyMDI2LTA0LTI2IjpbIjQ6Vk9DQUwiLCI1OlZPQ0FMIiwiMTI6Vk9DQUwiLCIxMzpURUNMQURPIiwiMTI6VklPTEFPIiwiMzpHVUlUQVJSQSIsIjU6QkFJWE8iLCI2OkJBVEVSSUEiLCI0Ok1JTklTVFJPIiwiNTpNSU5JU1RSTyIsIjc6Vk9DQUwiXSwiMjAyNi0wNS0wMyI6WyIzOlZPQ0FMIiwiNDpWT0NBTCIsIjEyOlZPQ0FMIiwiMTM6VEVDTEFETyIsIjEyOlZJT0xBTyIsIjM6R1VJVEFSUkEiLCI4OkJBSVhPIiwiOTpCQVRFUklBIiwiMzpTT00iLCIxMjpTT00iLCIxMDpNSURJQSIsIjM6TUlOSVNUUk8iLCIxNTpWT0NBTCIsIjE3OlZPQ0FMIl0sIjIwMjYtMDUtMTAiOlsiMjpWT0NBTCIsIjc6Vk9DQUwiLCIxOlRFQ0xBRE8iLCIxMjpWSU9MQU8iLCI1OlZPQ0FMIiwiNTpCQUlYTyIsIjY6QkFURVJJQSIsIjE6U09NIiwiMTA6TUlESUEiLCI3Ok1JTklTVFJPIiwiMTU6Vk9DQUwiLCIxOTpWT0NBTCJdLCIyMDI2LTA1LTE3IjpbIjE6Vk9DQUwiLCI3OlZPQ0FMIiwiMTM6VEVDTEFETyIsIjE1OlZJT0xBTyIsIjM6R1VJVEFSUkEiLCI4OkJBSVhPIiwiOTpCQVRFUklBIiwiMTpTT00iLCIxMDpNSURJQSIsIjE6TUlOSVNUUk8iLCIyOlZPQ0FMIiwiMzpWT0NBTCIsIjE5OlZJT0xBTyJdLCIyMDI2LTA1LTI0IjpbIjE1OkJBVEVSSUEiLCI0OlZPQ0FMIiwiMTI6Vk9DQUwiLCI1OlZPQ0FMIiwiMTpURUNMQURPIiwiMTI6VklPTEFPIiwiMzpHVUlUQVJSQSIsIjU6QkFJWE8iLCIxOlNPTSIsIjEwOk1JRElBIiwiNTpNSU5JU1RSTyIsIjc6Vk9DQUwiLCIxNTpWT0NBTCIsIjE4OlZPQ0FMIiwiMjA6QkFURVJJQSIsIjIxOkJBVEVSSUEiXSwiMjAyNi0wNS0zMSI6WyI1OlZPQ0FMIiwiMTU6VklPTEFPIiwiMTM6VEVDTEFETyIsIjM6R1VJVEFSUkEiLCI1OkJBSVhPIiwiNjpCQVRFUklBIiwiMTpTT00iLCIxMDpNSURJQSIsIjE6TUlOSVNUUk8iLCI0OlZPQ0FMIiwiMjpWT0NBTCIsIjE6Vk9DQUwiLCIxOTpWSU9MQU8iXSwiMjAyNi0wNS0yMyI6WyIxOk1JTklTVFJPIiwiMzpTT00iLCIxMjpWSU9MQU8iLCIyMjpNSURJQSJdfSwiY3VzdG9tRXZlbnRzIjpbeyJpZCI6MTc3NzQ1NDQ3MzQyNSwiZGF0ZSI6IjIwMjYtMDUtMjMiLCJ0eXBlIjoic3BlY2lhbCIsInRpdGxlIjoiV29ya3Nob3AgLSBNw61kaWEgZSBTb20iLCJ0aW1lIjoiMTg6MDAifV0sImV2ZW50Tm90ZXMiOnt9fQ==";
+  // DATA_HOLDER_END
+
+  // ====================================================================
+  // PERSISTÊNCIA LOCAL
+  // ====================================================================
+  const LS_KEY = "LouvorApp:data:v2";
+  const safeJSONParse = (raw) => { try { return JSON.parse(raw); } catch { return null; } };
+  const fromBase64 = (b64) => {
+    try { return safeJSONParse(decodeURIComponent(escape(window.atob(b64)))); }
+    catch (e) { console.error("Erro decodificando dados embutidos", e); return null; }
+  };
+  const toBase64 = (str) => {
+    try { return window.btoa(unescape(encodeURIComponent(str))); }
+    catch (e) { console.error("Erro codificando dados", e); return ""; }
+  };
+  const loadLocalData = () => {
+    try {
+      const raw = localStorage.getItem(LS_KEY);
+      if (!raw) return null;
+      const parsed = safeJSONParse(raw);
+      if (!parsed) return null;
+      return (parsed && typeof parsed === "object" && parsed.data && typeof parsed.data === "object") ? parsed.data : parsed;
+    } catch (e) { console.warn("LocalStorage indisponível.", e); return null; }
+  };
+  const saveLocalData = (data) => {
+    try {
+      localStorage.setItem(LS_KEY, JSON.stringify({ version: 2, savedAt: new Date().toISOString(), data }));
+      return true;
+    } catch (e) { console.warn("Falha ao salvar localmente.", e); return false; }
+  };
+
+  let INITIAL_DATA = loadLocalData() || fromBase64(DATA_B64) || {};
+
+  const COLOR_OPTIONS = [
+    { label: "Vermelho", value: "bg-rose-600 text-white" },
+    { label: "Azul", value: "bg-blue-600 text-white" },
+    { label: "Laranja", value: "bg-orange-600 text-white" },
+    { label: "Âmbar", value: "bg-amber-600 text-white" },
+    { label: "Verde", value: "bg-emerald-600 text-white" },
+    { label: "Indigo", value: "bg-indigo-600 text-white" },
+    { label: "Roxo", value: "bg-purple-600 text-white" },
+    { label: "Rosa", value: "bg-pink-600 text-white" },
+    { label: "Ciano", value: "bg-cyan-600 text-white" },
+    { label: "Cinza", value: "bg-slate-600 text-white" },
+    { label: "Amarelo", value: "bg-yellow-600 text-white" },
+    { label: "Lima", value: "bg-lime-600 text-white" }
+  ];
+
+  // Tipos de evento (estilo Planning Center)
+  const EVENT_TYPES = {
+    sunday:    { label: "Culto de Domingo", color: "bg-slate-900", icon: "⛪" },
+    saturday:  { label: "Culto de Sábado",  color: "bg-purple-600", icon: "🌙" },
+    midweek:   { label: "Culto de Meio de Semana", color: "bg-blue-600", icon: "📖" },
+    rehearsal: { label: "Ensaio", color: "bg-amber-600", icon: "🎵" },
+    special:   { label: "Evento Especial", color: "bg-rose-600", icon: "✨" }
+  };
+
+  // ====================================================================
+  // HELPERS DE DATA
+  // ====================================================================
+  const toISODate = (d) => {
+    const yr = d.getFullYear();
+    const mo = String(d.getMonth() + 1).padStart(2, '0');
+    const da = String(d.getDate()).padStart(2, '0');
+    return `${yr}-${mo}-${da}`;
+  };
+  const fromISODate = (s) => {
+    const [y, m, d] = s.split('-').map(Number);
+    return new Date(y, m - 1, d);
+  };
+  const getNextSundays = (refDate, count = 5) => {
+    const dates = [];
+    let d = new Date(refDate);
+    d.setHours(0, 0, 0, 0);
+    const day = d.getDay();
+    const diff = (7 - day) % 7;
+    d.setDate(d.getDate() + diff);
+    for (let i = 0; i < count; i++) {
+      dates.push(new Date(d));
+      d.setDate(d.getDate() + 7);
+    }
+    return dates;
+  };
+  const formatDateShort = (d) => d ? d.toLocaleDateString("pt-BR", { day: "2-digit", month: "2-digit" }) : "";
+  const formatDateFull = (d) => d ? d.toLocaleDateString("pt-BR", { weekday: "long", day: "numeric", month: "long" }) : "";
+  const formatWeekday = (d) => d ? d.toLocaleDateString("pt-BR", { weekday: "short" }).replace(".", "").toUpperCase() : "";
+
+  // ====================================================================
+  // COMPONENTE PRINCIPAL
+  // ====================================================================
+  function MinistryScheduler() {
+    const [activeTab, setActiveTab] = useState('dashboard');
+    const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+    const [roles, setRoles] = useState(() => INITIAL_DATA.roles || {});
+    const [members, setMembers] = useState(() =>
+      (INITIAL_DATA.members || []).map(m => ({ ...m, roles: m.roles ? m.roles : (m.role ? [m.role] : []) }))
+    );
+    const [unavailability, setUnavailability] = useState(() => INITIAL_DATA.unavailability || {});
+    const [roster, setRoster] = useState(() => INITIAL_DATA.roster || {});
+    const [customEvents, setCustomEvents] = useState(() => INITIAL_DATA.customEvents || []);
+    const [eventNotes, setEventNotes] = useState(() => INITIAL_DATA.eventNotes || {});
+
+    // UI / view state
+    const [baseDate, setBaseDate] = useState(new Date());
+    const [weeksToShow, setWeeksToShow] = useState(5);
+    const [memberSearch, setMemberSearch] = useState('');
+    const [toast, setToast] = useState(null);
+    const [exportImageModal, setExportImageModal] = useState(null);
+    const [theme, setTheme] = useState(() => {
+      try { return localStorage.getItem('LouvorApp:theme') || 'light'; } catch { return 'light'; }
+    });
+    const [showTextModal, setShowTextModal] = useState(null); // string ou null
+
+    // Aplica/remove classe dark no <html>
+    useEffect(() => {
+      const root = document.documentElement;
+      if (theme === 'dark') root.classList.add('dark'); else root.classList.remove('dark');
+      try { localStorage.setItem('LouvorApp:theme', theme); } catch {}
+    }, [theme]);
+
+    // Modais
+    const [showAddMemberModal, setShowAddMemberModal] = useState(false);
+    const [showAddCategoryModal, setShowAddCategoryModal] = useState(false);
+    const [showAddEventModal, setShowAddEventModal] = useState(false);
+    const [showNotesModal, setShowNotesModal] = useState(null); // dateStr ou null
+
+    // Forms
+    const [newMemberName, setNewMemberName] = useState('');
+    const [newMemberRoles, setNewMemberRoles] = useState(['VOCAL']);
+    const [editingMemberId, setEditingMemberId] = useState(null);
+    const [editName, setEditName] = useState('');
+    const [editRoles, setEditRoles] = useState([]);
+    const [newCategoryName, setNewCategoryName] = useState('');
+    const [newCategoryColor, setNewCategoryColor] = useState(COLOR_OPTIONS[0].value);
+    const [editingCategoryKey, setEditingCategoryKey] = useState(null);
+    const [editCategoryName, setEditCategoryName] = useState('');
+    const [editCategoryColor, setEditCategoryColor] = useState('');
+
+    // Form do novo evento
+    const [newEventDate, setNewEventDate] = useState(toISODate(new Date()));
+    const [newEventType, setNewEventType] = useState('saturday');
+    const [newEventTitle, setNewEventTitle] = useState('');
+    const [newEventTime, setNewEventTime] = useState('19:30');
+
+    // Auto-save com debounce
+    useEffect(() => {
+      const t = setTimeout(() => {
+        saveLocalData({ roles, members, unavailability, roster, customEvents, eventNotes });
+      }, 250);
+      return () => clearTimeout(t);
+    }, [roles, members, unavailability, roster, customEvents, eventNotes]);
+
+    // Toast helper
+    const showToast = (msg, type = 'success') => {
+      setToast({ msg, type });
+      setTimeout(() => setToast(null), 2500);
+    };
+
+    // ================================================================
+    // DATAS COMBINADAS: Domingos automáticos + Eventos Customizados
+    // ================================================================
+    const dates = useMemo(() => {
+      const sundays = getNextSundays(baseDate, weeksToShow).map(d => ({
+        date: d,
+        dateStr: toISODate(d),
+        title: 'Culto de Domingo',
+        type: 'sunday',
+        time: '',
+        isAuto: true
+      }));
+
+      // Janela de visualização: do início (-1 dia) até o último domingo +6 dias
+      const minDate = new Date(baseDate); minDate.setHours(0, 0, 0, 0);
+      const maxDate = sundays.length > 0 ? new Date(sundays[sundays.length - 1].date) : new Date(baseDate);
+      maxDate.setDate(maxDate.getDate() + 6);
+
+      const customInWindow = customEvents
+        .filter(e => {
+          const d = fromISODate(e.date);
+          return d >= minDate && d <= maxDate;
+        })
+        .map(e => ({
+          date: fromISODate(e.date),
+          dateStr: e.date,
+          title: e.title || EVENT_TYPES[e.type]?.label || 'Evento',
+          type: e.type,
+          time: e.time || '',
+          isAuto: false,
+          eventId: e.id
+        }));
+
+      // Mesclar - evento custom em mesma data substitui o domingo automático
+      const merged = [...sundays];
+      customInWindow.forEach(e => {
+        const idx = merged.findIndex(m => m.dateStr === e.dateStr);
+        if (idx >= 0) merged[idx] = e;
+        else merged.push(e);
+      });
+
+      return merged.sort((a, b) => a.date - b.date);
+    }, [baseDate, customEvents, weeksToShow]);
+
+    // ================================================================
+    // NAVEGAÇÃO DE DATAS
+    // ================================================================
+    const shiftWeeks = (n) => {
+      const nd = new Date(baseDate);
+      nd.setDate(nd.getDate() + (n * 7));
+      setBaseDate(nd);
+    };
+
+    // ================================================================
+    // MEMBROS
+    // ================================================================
+    const handleAddRoleToNewMember = (rk) => {
+      if (newMemberRoles.length >= 7) return alert("Máximo 7 categorias permitidas");
+      if (!newMemberRoles.includes(rk)) setNewMemberRoles([...newMemberRoles, rk]);
+    };
+    const handleRemoveRoleFromNewMember = (rk) => {
+      if (newMemberRoles.length <= 1) return;
+      setNewMemberRoles(newMemberRoles.filter(r => r !== rk));
+    };
+    const handleAddMember = (e) => {
+      e.preventDefault();
+      if (!newMemberName.trim()) return;
+      const id = members.length > 0 ? Math.max(...members.map(m => m.id)) + 1 : 1;
+      setMembers([...members, { id, name: newMemberName, roles: newMemberRoles }]);
+      setNewMemberName(''); setNewMemberRoles(['VOCAL']);
+      setShowAddMemberModal(false);
+      showToast('Membro adicionado!');
+    };
+    const handleDeleteMember = (id) => {
+      if (confirm('Remover este membro?')) {
+        setMembers(members.filter(m => m.id !== id));
+        showToast('Membro removido');
+      }
+    };
+    const startEditingMember = (m) => {
+      setEditingMemberId(m.id); setEditName(m.name); setEditRoles([...m.roles]);
+    };
+    const handleAddRoleEdit = (rk) => {
+      if (editRoles.length >= 7) return alert("Máximo 7 categorias permitidas");
+      if (!editRoles.includes(rk)) setEditRoles([...editRoles, rk]);
+    };
+    const handleRemoveRoleEdit = (rk) => {
+      if (editRoles.length <= 1) return;
+      setEditRoles(editRoles.filter(r => r !== rk));
+    };
+    const saveMemberEdit = () => {
+      if (!editName.trim()) return;
+      setMembers(members.map(m => m.id === editingMemberId ? { ...m, name: editName, roles: editRoles } : m));
+      setEditingMemberId(null);
+    };
+
+    // ================================================================
+    // CATEGORIAS
+    // ================================================================
+    const handleAddCategory = (e) => {
+      e.preventDefault();
+      if (!newCategoryName.trim()) return;
+      const k = newCategoryName.toUpperCase().replace(/\s+/g, '_').normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+      if (roles[k]) return alert('Já existe categoria com este nome');
+      setRoles({ ...roles, [k]: { label: newCategoryName, color: newCategoryColor } });
+      setNewCategoryName(''); setShowAddCategoryModal(false);
+      showToast('Categoria adicionada!');
+    };
+    const handleDeleteCategory = (k) => {
+      if (members.some(m => m.roles.includes(k))) return alert('Categoria em uso por membros');
+      if (confirm('Excluir categoria?')) {
+        const r = { ...roles }; delete r[k]; setRoles(r);
+        showToast('Categoria removida');
+      }
+    };
+    const startEditingCategory = (k) => {
+      setEditingCategoryKey(k); setEditCategoryName(roles[k].label); setEditCategoryColor(roles[k].color);
+    };
+    const saveCategoryEdit = () => {
+      if (!editCategoryName.trim()) return;
+      setRoles({ ...roles, [editingCategoryKey]: { ...roles[editingCategoryKey], label: editCategoryName, color: editCategoryColor } });
+      setEditingCategoryKey(null);
+    };
+
+    // ================================================================
+    // EVENTOS CUSTOMIZADOS
+    // ================================================================
+    const handleAddEvent = (e) => {
+      e.preventDefault();
+      if (!newEventDate) return;
+      const id = Date.now();
+      const title = newEventTitle.trim() || EVENT_TYPES[newEventType].label;
+      setCustomEvents([...customEvents, {
+        id, date: newEventDate, type: newEventType, title, time: newEventTime
+      }]);
+      setNewEventTitle(''); setNewEventTime('19:30');
+      setShowAddEventModal(false);
+      // Reposicionar visualização para incluir a data adicionada
+      const eventDate = fromISODate(newEventDate);
+      const diff = Math.floor((eventDate - new Date(baseDate.getFullYear(), baseDate.getMonth(), baseDate.getDate())) / (1000 * 60 * 60 * 24));
+      if (diff < 0 || diff > weeksToShow * 7) {
+        setBaseDate(eventDate);
+      }
+      showToast('Data adicionada!');
+    };
+    const handleDeleteEvent = (id) => {
+      if (confirm('Remover este evento?')) {
+        setCustomEvents(customEvents.filter(ev => ev.id !== id));
+        showToast('Evento removido');
+      }
+    };
+
+    // ================================================================
+    // DISPONIBILIDADE / ESCALA
+    // ================================================================
+    const toggleUnavailability = (d, id) => setUnavailability(prev => {
+      const l = prev[d] || [];
+      return { ...prev, [d]: l.includes(id) ? l.filter(x => x !== id) : [...l, id] };
+    });
+    const toggleRosterMember = (d, id, rk) => {
+      const a = `${id}:${rk}`;
+      setRoster(prev => {
+        const l = prev[d] || [];
+        return { ...prev, [d]: l.includes(a) ? l.filter(x => x !== a) : [...l, a] };
+      });
+    };
+    const isUnavailable = (d, id) => unavailability[d]?.includes(id);
+    const isInRoster = (d, id, rk) => roster[d]?.includes(`${id}:${rk}`);
+
+    // Conflitos: membro escalado em data marcada como indisponível
+    const conflicts = useMemo(() => {
+      const list = [];
+      dates.forEach(d => {
+        const assigns = roster[d.dateStr] || [];
+        assigns.forEach(a => {
+          const [mId, rKey] = a.split(':');
+          const memberId = parseInt(mId);
+          if (isUnavailable(d.dateStr, memberId)) {
+            const mem = members.find(m => m.id === memberId);
+            if (mem) list.push({ date: d.dateStr, dateLabel: formatDateShort(d.date), member: mem.name, role: roles[rKey]?.label });
+          }
+        });
+      });
+      return list;
+    }, [dates, roster, unavailability, members, roles]);
+
+    // Stats / Balanceamento — conta DIAS escalado dentro do RANGE VISÍVEL
+    const stats = useMemo(() => {
+      const visibleDateStrs = new Set(dates.map(d => d.dateStr));
+      const memberDays = {};
+      members.forEach(m => { memberDays[m.id] = 0; });
+
+      Object.entries(roster).forEach(([dateStr, arr]) => {
+        if (!visibleDateStrs.has(dateStr)) return; // só conta datas visíveis
+        const memberSet = new Set();
+        arr.forEach(a => {
+          const [mId] = a.split(':');
+          memberSet.add(parseInt(mId));
+        });
+        memberSet.forEach(id => {
+          if (memberDays[id] !== undefined) memberDays[id]++;
+        });
+      });
+
+      const totalDays = dates.length;
+      const sorted = members
+        .map(m => ({ ...m, count: memberDays[m.id] || 0 }))
+        .sort((a, b) => b.count - a.count);
+      return { sorted, max: totalDays || 1, totalDays };
+    }, [members, roster, dates]);
+
+    // Cor da barra: verde (≥2 folgas), amarelo (1 folga), vermelho (sem folga)
+    const getBarColor = (count, max) => {
+      if (count === 0) return 'bg-slate-300';
+      if (count >= max) return 'bg-rose-500';
+      if (count === max - 1) return 'bg-amber-500';
+      return 'bg-emerald-500';
+    };
+
+    // ================================================================
+    // EXPORTAÇÃO: Salvar HTML, PDF (print), PNG, Copy
+    // ================================================================
+    const handleSaveAs = () => {
+      const now = new Date();
+      const dStr = now.toLocaleDateString('pt-BR').replace(/\//g, '-');
+      const fName = `LouvorApp_${dStr}.html`;
+      
+      const cData = { roles, members, unavailability, roster, customEvents, eventNotes };
+      const b64 = toBase64(JSON.stringify(cData));
+      saveLocalData(cData);
+
+      // Pega o conteúdo dos elementos base do código original (sem clonar o DOM inteiro)
+      const styleNode = document.getElementById('app-style');
+      const scriptNode = document.getElementById('app-script');
+
+      if (!styleNode || !scriptNode) {
+        showToast('Erro crítico: Molde original não encontrado. Recarregue a página.', 'error');
+        return;
+      }
+
+      const styleContent = styleNode.textContent;
+      const scriptContent = scriptNode.textContent;
+
+      // Busca e troca os dados salvos dentro da string pura do React
+      const holderRegex = /(\/\/\s*DATA_HOLDER_START[\s\S]*?\b(?:const|var|let)\s+DATA_B64\s*=\s*")(.*?)(";[\s\S]*?\/\/\s*DATA_HOLDER_END)/g;
+      
+      if (!holderRegex.test(scriptContent)) {
+        showToast("Erro: marcador DATA_HOLDER não encontrado no código.", 'error');
+        return;
+      }
+      
+      const newScriptContent = scriptContent.replace(holderRegex, `$1${b64}$3`);
+
+      // Usa um truque simples com strings para as tags de script
+      const sTagOpen = "<" + "script>";
+      const sTagClose = "</" + "script>";
+
+      // Remonta o arquivo HTML exato do zero usando a Template String limpa
+      // Isso ignora TUDO que o Tailwind e o Babel injetaram no navegador, garantindo perfeição.
+      const cleanHTML = `<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LouvorApp - Ministério de Louvor</title>
+<script src="https://unpkg.com/react@18/umd/react.production.min.js">${sTagClose}
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js">${sTagClose}
+<script src="https://unpkg.com/@babel/standalone/babel.min.js">${sTagClose}
+<script src="https://cdn.tailwindcss.com">${sTagClose}
+${sTagOpen}
+  tailwind.config = { darkMode: 'class' };
+${sTagClose}
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js">${sTagClose}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html-to-image/1.11.11/html-to-image.min.js">${sTagClose}
+<style id="app-style">${styleContent}</style>
+</head>
+<body class="bg-slate-50 text-slate-800">
+<div id="root"></div>
+<script type="text/babel" data-presets="react" id="app-script">${newScriptContent}${sTagClose}
+</body>
+</html>`;
+
+      const blob = new Blob([cleanHTML], { type: 'text/html;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url; link.download = fName;
+      document.body.appendChild(link); link.click();
+      document.body.removeChild(link);
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
+      showToast('Arquivo salvo perfeitamente com todas as funções!');
+    };
+
+    const handlePrintPDF = () => {
+      // Garante tema claro durante impressão (visualmente, o CSS @media print já força)
+      window.print();
+    };
+
+    const captureRef = useRef(null);
+
+    // Usa biblioteca html-to-image (muito superior para Tailwind)
+    const handleExportPNG = async (action = 'download') => {
+      const node = captureRef.current;
+      if (!node) {
+        showToast('Erro: área de captura não encontrada', 'error');
+        return;
+      }
+      if (node.offsetHeight === 0) {
+        showToast('Mude para a aba Visão Geral primeiro', 'error');
+        return;
+      }
+      if (typeof window.htmlToImage === 'undefined') {
+        showToast('Biblioteca html-to-image não carregou. Verifique a internet.', 'error');
+        return;
+      }
+
+      showToast('Gerando imagem limpa... (aguarde)', 'info');
+      
+      // Temporariamente remove o dark mode para o print sair limpo com fundo claro
+      const wasDark = document.documentElement.classList.contains('dark');
+      if (wasDark) document.documentElement.classList.remove('dark');
+      
+      node.classList.add('capturing');
+
+      // Aguarda o React/Navegador aplicar a classe e redesenhar a tela
+      await new Promise(r => setTimeout(r, 100));
+
+      try {
+        const blob = await window.htmlToImage.toBlob(node, {
+          quality: 1,
+          pixelRatio: 2, // Maior resolução para não borrar
+          backgroundColor: '#f8fafc', // Fundo original (slate-50 do tailwind)
+          style: {
+            margin: '0',
+            padding: '16px', // Espaçamento em volta pra ficar bonito
+            borderRadius: '0',
+          },
+          filter: (domNode) => {
+            // Ignora botões de edição, lixeiras, barras de rolagem que tem classe no-print
+            if (domNode.classList && domNode.classList.contains('no-print')) return false;
+            return true;
+          }
+        });
+
+        if (!blob) throw new Error("A imagem retornou vazia");
+
+        const filename = `Escala_Louvor_${toISODate(new Date())}.png`;
+
+        if (action === 'copy') {
+          try {
+            if (!window.isSecureContext) throw new Error('Cópia bloqueada (precisa de HTTPS ou localhost)');
+            if (!navigator.clipboard?.write || !window.ClipboardItem) throw new Error('API do Clipboard não suportada no seu navegador');
+            
+            await navigator.clipboard.write([new ClipboardItem({ 'image/png': blob })]);
+            showToast('Imagem perfeita copiada! Pode colar no WhatsApp 📱');
+          } catch (copyError) {
+            console.warn('[ExportPNG] Fallback para modal devido a bloqueio do clipboard:', copyError);
+            const url = URL.createObjectURL(blob);
+            setExportImageModal(url);
+            showToast('Cópia automática bloqueada. Copie manualmente na tela!', 'info');
+          }
+        } else {
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url; a.download = filename;
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+          setTimeout(() => URL.revokeObjectURL(url), 5000);
+          showToast('Imagem baixada com sucesso!');
+        }
+
+      } catch (e) {
+        console.error('[ExportPNG] Falha:', e);
+        showToast(`Erro na geração: ${e.message}`, 'error');
+      } finally {
+        node.classList.remove('capturing');
+        if (wasDark) document.documentElement.classList.add('dark');
+      }
+    };
+
+    // Gera texto formatado para WhatsApp
+    const buildWhatsAppText = () => {
+      let text = `*🎵 ESCALA — MINISTÉRIO DE LOUVOR*\n`;
+      if (dates.length > 0) {
+        text += `_${formatDateShort(dates[0].date)} a ${formatDateShort(dates[dates.length - 1].date)}_\n`;
+      }
+      text += `\n━━━━━━━━━━━━━━━\n\n`;
+      text += `*📅 ESCALA*\n\n`;
+
+      dates.forEach(d => {
+        const ds = d.dateStr;
+        const assigns = roster[ds] || [];
+        const evType = EVENT_TYPES[d.type] || EVENT_TYPES.sunday;
+        const wd = d.date.toLocaleDateString('pt-BR', { weekday: 'long' });
+        const wdCap = wd.charAt(0).toUpperCase() + wd.slice(1);
+
+        text += `${evType.icon} *${wdCap}, ${formatDateShort(d.date)}*`;
+        if (d.time) text += ` _• ${d.time}_`;
+        text += `\n`;
+        if (!d.isAuto) text += `_${d.title}_\n`;
+        if (eventNotes[ds]) text += `📝 _${eventNotes[ds]}_\n`;
+
+        const byRole = {};
+        assigns.forEach(a => {
+          const [mId, rKey] = a.split(':');
+          const mem = members.find(m => m.id === parseInt(mId));
+          if (mem && roles[rKey]) {
+            if (!byRole[rKey]) byRole[rKey] = [];
+            byRole[rKey].push(mem.name);
+          }
+        });
+
+        if (Object.keys(byRole).length === 0) {
+          text += `_(sem escala definida)_\n`;
+        } else {
+          Object.keys(roles).forEach(rk => {
+            if (byRole[rk]) {
+              text += `• *${roles[rk].label}:* ${byRole[rk].join(', ')}\n`;
+            }
+          });
+        }
+        text += `\n`;
+      });
+
+      // Indisponibilidades
+      const unavailLines = [];
+      members.forEach(m => {
+        const ud = dates.filter(d => isUnavailable(d.dateStr, m.id))
+                        .map(d => formatDateShort(d.date));
+        if (ud.length > 0) unavailLines.push(`• *${m.name}:* ${ud.join(', ')}`);
+      });
+      if (unavailLines.length > 0) {
+        text += `━━━━━━━━━━━━━━━\n\n*✗ INDISPONIBILIDADES*\n\n`;
+        text += unavailLines.join('\n') + '\n\n';
+      }
+
+      // Balanceamento (apenas no range visível)
+      text += `━━━━━━━━━━━━━━━\n\n*📊 BALANCEAMENTO* _(em ${stats.totalDays} ${stats.totalDays === 1 ? 'culto' : 'cultos'} visualizados)_\n\n`;
+      stats.sorted.filter(m => m.count > 0).forEach(m => {
+        const folgas = stats.totalDays - m.count;
+        const tag = m.count === stats.totalDays ? ' ⚠️' : folgas === 1 ? ' ⚡' : '';
+        text += `• ${m.name}: *${m.count}/${stats.totalDays}*${tag}\n`;
+      });
+      const semEscala = stats.sorted.filter(m => m.count === 0);
+      if (semEscala.length > 0) {
+        text += `\n_Sem escala neste período:_ ${semEscala.map(m => m.name).join(', ')}\n`;
+      }
+
+      text += `\n━━━━━━━━━━━━━━━\n_Gerado em ${new Date().toLocaleDateString('pt-BR')} via LouvorApp_`;
+      return text;
+    };
+
+    const handleCopyText = async () => {
+      const text = buildWhatsAppText();
+      try {
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          await navigator.clipboard.writeText(text);
+          showToast('Texto copiado! Cole no WhatsApp 📱');
+          return;
+        }
+        throw new Error('Clipboard API indisponível');
+      } catch (e) {
+        // Fallback: abre modal pro usuário copiar manualmente
+        setShowTextModal(text);
+        showToast('Selecione e copie manualmente', 'info');
+      }
+    };
+
+    // ================================================================
+    // CONTROLES DE DATA (header de cada aba)
+    // ================================================================
+    const renderDateControls = (label, extra) => (
+      <div className="flex flex-wrap items-center justify-between gap-3 mb-6 no-print">
+        <div className="flex flex-wrap items-center gap-3">
+          <h2 className="text-2xl font-bold text-slate-800">{label}</h2>
+          <div className="flex bg-white rounded-lg border shadow-sm p-1">
+            <button onClick={() => shiftWeeks(-1)} className="p-1.5 hover:bg-slate-100 rounded text-slate-600" title="Semana Anterior"><ChevronLeft size={18} /></button>
+            <button onClick={() => setBaseDate(new Date())} className="px-2 text-xs font-bold text-indigo-600 hover:bg-indigo-50 rounded" title="Voltar para Hoje">HOJE</button>
+            <button onClick={() => shiftWeeks(1)} className="p-1.5 hover:bg-slate-100 rounded text-slate-600" title="Próxima Semana"><ChevronRight size={18} /></button>
+          </div>
+          <select
+            value={weeksToShow}
+            onChange={e => setWeeksToShow(parseInt(e.target.value))}
+            className="bg-white border rounded-lg text-sm px-2 py-1.5 shadow-sm">
+            <option value={3}>3 semanas</option>
+            <option value={5}>5 semanas</option>
+            <option value={8}>8 semanas</option>
+            <option value={12}>12 semanas</option>
+          </select>
+        </div>
+        {extra}
+      </div>
+    );
+
+    // ================================================================
+    // DASHBOARD
+    // ================================================================
+    const renderDashboard = () => (
+      <div className="space-y-6 animate-fade-in">
+        {renderDateControls("Visão Geral",
+          <div className="flex flex-wrap gap-2">
+            <button onClick={() => setShowAddEventModal(true)} className="flex items-center gap-2 bg-emerald-600 text-white px-3 py-2 rounded-lg text-sm font-medium hover:bg-emerald-700 transition shadow">
+              <CalendarPlus size={16} /> Adicionar Data
+            </button>
+            <div className="flex flex-wrap gap-2 ml-auto">
+              <button onClick={handleCopyText} className="flex items-center gap-2 bg-blue-600 text-white px-3 py-2 rounded-lg text-sm font-medium hover:bg-blue-700 transition shadow">
+                <FileText size={16} /> Copiar Texto
+              </button>
+              <button onClick={() => handleExportPNG('copy')} className="flex items-center gap-2 bg-green-600 text-white px-3 py-2 rounded-lg text-sm font-medium hover:bg-green-700 transition shadow">
+                <Copy size={16} /> Copiar Imagem
+              </button>
+              <button onClick={() => handleExportPNG('download')} className="flex items-center gap-2 bg-white border text-slate-700 px-3 py-2 rounded-lg text-sm font-medium hover:bg-slate-50 transition shadow-sm">
+                <ImageIcon size={16} /> Baixar PNG
+              </button>
+              <button onClick={handlePrintPDF} className="flex items-center gap-2 bg-rose-600 text-white px-3 py-2 rounded-lg text-sm font-medium hover:bg-rose-700 transition shadow">
+                <Printer size={16} /> PDF (3 págs)
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* Conflitos */}
+        {conflicts.length > 0 && (
+          <div className="bg-rose-50 border border-rose-200 rounded-xl p-4 no-print">
+            <div className="flex items-start gap-3">
+              <AlertTriangle className="text-rose-600 shrink-0" size={20} />
+              <div className="flex-1">
+                <h3 className="font-bold text-rose-900">{conflicts.length} conflito(s) detectado(s)</h3>
+                <p className="text-sm text-rose-700 mt-1">Membros escalados em datas marcadas como indisponíveis:</p>
+                <ul className="mt-2 space-y-1 text-sm">
+                  {conflicts.slice(0, 5).map((c, i) => (
+                    <li key={i} className="text-rose-800">
+                      <strong>{c.member}</strong> em <strong>{c.dateLabel}</strong> ({c.role})
+                    </li>
+                  ))}
+                  {conflicts.length > 5 && <li className="text-rose-700">... e mais {conflicts.length - 5}</li>}
+                </ul>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Cards de métricas */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
+          <div className="bg-slate-900 rounded-xl p-4 md:p-5 text-white shadow-lg">
+            <div className="flex justify-between items-start">
+              <div>
+                <p className="text-slate-300 text-xs md:text-sm font-medium mb-1">Cultos</p>
+                <h3 className="text-3xl md:text-4xl font-bold">{dates.length}</h3>
+              </div>
+              <div className="bg-white/20 p-2 rounded-lg"><Calendar size={20} /></div>
+            </div>
+            <p className="text-xs text-slate-300 mt-2">Visualizando</p>
+          </div>
+          <div className="bg-white rounded-xl p-4 md:p-5 border shadow-sm">
+            <div className="flex justify-between items-start">
+              <div>
+                <p className="text-slate-500 text-xs md:text-sm font-medium mb-1">Membros</p>
+                <h3 className="text-3xl md:text-4xl font-bold text-slate-800">{members.length}</h3>
+              </div>
+              <div className="bg-rose-50 text-rose-600 p-2 rounded-lg"><Users size={20} /></div>
+            </div>
+            <p className="text-xs text-slate-400 mt-2">Ativos</p>
+          </div>
+          <div className="bg-white rounded-xl p-4 md:p-5 border shadow-sm">
+            <div className="flex justify-between items-start">
+              <div>
+                <p className="text-slate-500 text-xs md:text-sm font-medium mb-1">Funções</p>
+                <h3 className="text-3xl md:text-4xl font-bold text-slate-800">{Object.keys(roles).length}</h3>
+              </div>
+              <div className="bg-amber-50 text-amber-600 p-2 rounded-lg"><Tags size={20} /></div>
+            </div>
+            <p className="text-xs text-slate-400 mt-2">Categorias</p>
+          </div>
+          <div className={`rounded-xl p-4 md:p-5 border shadow-sm ${conflicts.length > 0 ? 'bg-rose-50 border-rose-200' : 'bg-emerald-50 border-emerald-200'}`}>
+            <div className="flex justify-between items-start">
+              <div>
+                <p className={`text-xs md:text-sm font-medium mb-1 ${conflicts.length > 0 ? 'text-rose-700' : 'text-emerald-700'}`}>Conflitos</p>
+                <h3 className={`text-3xl md:text-4xl font-bold ${conflicts.length > 0 ? 'text-rose-700' : 'text-emerald-700'}`}>{conflicts.length}</h3>
+              </div>
+              <div className={`p-2 rounded-lg ${conflicts.length > 0 ? 'bg-rose-100 text-rose-600' : 'bg-emerald-100 text-emerald-600'}`}>
+                {conflicts.length > 0 ? <AlertTriangle size={20} /> : <CheckCircle2 size={20} />}
+              </div>
+            </div>
+            <p className={`text-xs mt-2 ${conflicts.length > 0 ? 'text-rose-600' : 'text-emerald-600'}`}>{conflicts.length > 0 ? 'Verificar escala' : 'Tudo certo!'}</p>
+          </div>
+        </div>
+
+        {/* ÁREA CAPTURÁVEL: 3 páginas (Escala / Disponibilidade / Balanceamento) */}
+        <div ref={captureRef} id="print-area" className="space-y-6 bg-slate-50 rounded-xl p-4 md:p-6">
+
+          {/* ============ PÁGINA 1 — ESCALA ============ */}
+          <div className="print-page space-y-4">
+            <div className="flex items-center justify-between border-b-2 border-slate-900 pb-3 avoid-break">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 bg-slate-900 rounded-xl flex items-center justify-center text-white">
+                  <Music size={20} />
+                </div>
+                <div>
+                  <h2 className="font-bold text-xl text-slate-800">Escala do Ministério de Louvor</h2>
+                  <p className="text-xs text-slate-500">
+                    {dates.length > 0 && `${formatDateShort(dates[0].date)} a ${formatDateShort(dates[dates.length - 1].date)}`}
+                    {' • Gerado em '}{new Date().toLocaleDateString('pt-BR')}
+                  </p>
+                </div>
+              </div>
+              <span className="text-xs text-slate-400 font-mono no-print">Página 1/3</span>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
+              {dates.map((d, i) => {
+                const ds = d.dateStr;
+                const assigns = roster[ds] || [];
+                const evType = EVENT_TYPES[d.type] || EVENT_TYPES.sunday;
+                const note = eventNotes[ds];
+                const currentAssignments = {};
+                assigns.forEach(a => {
+                  const [mId, rKey] = a.split(':');
+                  const mem = members.find(m => m.id === parseInt(mId));
+                  if (mem && roles[rKey]) {
+                    if (!currentAssignments[rKey]) currentAssignments[rKey] = [];
+                    currentAssignments[rKey].push({ name: mem.name, conflict: isUnavailable(ds, mem.id) });
+                  }
+                });
+                return (
+                  <div key={i} className="bg-white border-2 border-slate-200 rounded-xl p-3 shadow-sm flex flex-col print-card avoid-break">
+                    <div className={`-m-3 mb-2 px-3 py-2 rounded-t-xl ${evType.color} text-white flex items-center justify-between`}>
+                      <div className="flex items-center gap-2 min-w-0">
+                        <span className="text-base">{evType.icon}</span>
+                        <div className="min-w-0">
+                          <div className="text-[10px] uppercase opacity-90 font-bold leading-tight">{formatWeekday(d.date)} {d.time && `• ${d.time}`}</div>
+                          <div className="font-bold leading-tight truncate">{formatDateShort(d.date)} — {d.title}</div>
+                        </div>
+                      </div>
+                      <span className="bg-white/25 text-white text-xs px-2 py-0.5 rounded-full font-bold shrink-0">{assigns.length}</span>
+                    </div>
+                    {note && (
+                      <div className="bg-amber-50 border border-amber-200 rounded px-2 py-1 mb-2 text-xs text-amber-800 flex items-start gap-1">
+                        <StickyNote size={12} className="mt-0.5 shrink-0" /> <span>{note}</span>
+                      </div>
+                    )}
+                    <div className="flex-1 space-y-1.5 text-xs">
+                      {assigns.length === 0 ? (
+                        <p className="text-slate-400 italic text-center py-3">Sem escala</p>
+                      ) : (
+                        Object.keys(roles).map(rKey => {
+                          const arr = currentAssignments[rKey];
+                          if (!arr || arr.length === 0) return null;
+                          const colorText = roles[rKey].color.replace('bg-', 'text-').split(' ')[0];
+                          return (
+                            <div key={rKey} className="flex items-baseline gap-1">
+                              <span className={`font-bold whitespace-nowrap ${colorText}`}>{roles[rKey].label}:</span>
+                              <span className="text-slate-700">
+                                {arr.map((p, idx) => (
+                                  <span key={idx} className={p.conflict ? 'text-rose-600 line-through' : ''}>
+                                    {p.name}{idx < arr.length - 1 ? ', ' : ''}
+                                  </span>
+                                ))}
+                              </span>
+                            </div>
+                          );
+                        })
+                      )}
+                    </div>
+                    <div className="mt-2 pt-2 border-t flex justify-between items-center no-print">
+                      <button
+                        onClick={() => setShowNotesModal(ds)}
+                        className="text-xs text-slate-500 hover:text-indigo-600 flex items-center gap-1">
+                        <StickyNote size={12} /> {note ? 'Editar nota' : 'Nota'}
+                      </button>
+                      {!d.isAuto && (
+                        <button
+                          onClick={() => handleDeleteEvent(d.eventId)}
+                          className="text-xs text-rose-500 hover:text-rose-700 flex items-center gap-1">
+                          <Trash2 size={12} /> Remover
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+
+          <div className="h-8"></div> {/* Spacer visual entre sessoes */}
+
+          {/* ============ PÁGINA 2 — DISPONIBILIDADE ============ */}
+          <div className="print-page space-y-3">
+            <div className="flex items-center justify-between border-b-2 border-emerald-600 pb-3 avoid-break">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 bg-emerald-600 rounded-xl flex items-center justify-center text-white">
+                  <CalendarCheck size={20} />
+                </div>
+                <div>
+                  <h2 className="font-bold text-xl text-slate-800">Disponibilidade</h2>
+                  <p className="text-xs text-slate-500">✓ disponível • ✗ indisponível • ● escalado • ⚠ conflito</p>
+                </div>
+              </div>
+              <span className="text-xs text-slate-400 font-mono no-print">Página 2/3</span>
+            </div>
+
+            <div className="bg-white rounded-xl border shadow-sm overflow-x-auto print-card">
+              <table className="w-full text-sm">
+                <thead className="bg-slate-100 border-b text-slate-600 text-xs uppercase">
+                  <tr>
+                    <th className="px-3 py-2 text-left sticky left-0 bg-slate-100 z-10">Membro</th>
+                    {dates.map((d, i) => (
+                      <th key={i} className="px-2 py-2 text-center font-medium">
+                        <div className="text-[10px] text-slate-400">{formatWeekday(d.date)}</div>
+                        <div>{formatDateShort(d.date)}</div>
+                      </th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody className="divide-y">
+                  {members.map(m => (
+                    <tr key={m.id} className="hover:bg-slate-50">
+                      <td className="px-3 py-1.5 font-medium text-slate-800 sticky left-0 bg-white whitespace-nowrap text-xs md:text-sm">{m.name}</td>
+                      {dates.map((d, i) => {
+                        const ds = d.dateStr;
+                        const un = isUnavailable(ds, m.id);
+                        const sched = (roster[ds] || []).some(a => a.startsWith(`${m.id}:`));
+                        return (
+                          <td key={i} className="px-1 py-1 text-center">
+                            <div className={`w-7 h-7 rounded mx-auto flex items-center justify-center text-xs font-bold ${
+                              un && sched ? 'bg-rose-200 text-rose-700 ring-2 ring-rose-500' :
+                              un ? 'bg-rose-100 text-rose-600' :
+                              sched ? 'bg-indigo-100 text-indigo-700' :
+                              'bg-emerald-50 text-emerald-500'
+                            }`}>
+                              {un && sched ? '⚠' : un ? '✗' : sched ? '●' : '✓'}
+                            </div>
+                          </td>
+                        );
+                      })}
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+            <div className="text-xs text-slate-500 mt-2 flex flex-wrap gap-3">
+              <span className="flex items-center gap-1"><span className="w-3 h-3 bg-indigo-100 rounded inline-block"></span> Escalado</span>
+              <span className="flex items-center gap-1"><span className="w-3 h-3 bg-rose-100 rounded inline-block"></span> Indisponível</span>
+              <span className="flex items-center gap-1"><span className="w-3 h-3 bg-emerald-50 border border-emerald-200 rounded inline-block"></span> Disponível</span>
+              <span className="flex items-center gap-1"><span className="w-3 h-3 bg-rose-200 ring-1 ring-rose-500 rounded inline-block"></span> Conflito</span>
+            </div>
+          </div>
+
+          <div className="h-8"></div> {/* Spacer visual entre sessoes */}
+
+          {/* ============ PÁGINA 3 — BALANCEAMENTO ============ */}
+          <div className="print-page space-y-3">
+            <div className="flex items-center justify-between border-b-2 border-purple-600 pb-3 avoid-break">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 bg-purple-600 rounded-xl flex items-center justify-center text-white">
+                  <BarChart3 size={20} />
+                </div>
+                <div>
+                  <h2 className="font-bold text-xl text-slate-800">Balanceamento de Escalações</h2>
+                  <p className="text-xs text-slate-500">
+                    Dias servidos no período de <strong>{stats.totalDays} {stats.totalDays === 1 ? 'culto' : 'cultos'}</strong> visualizados
+                    {' • '}
+                    <span className="text-emerald-600">verde = ≥2 folgas</span>
+                    {' • '}
+                    <span className="text-amber-600">amarelo = 1 folga</span>
+                    {' • '}
+                    <span className="text-rose-600">vermelho = sem folga</span>
+                  </p>
+                </div>
+              </div>
+              <span className="text-xs text-slate-400 font-mono no-print">Página 3/3</span>
+            </div>
+
+            <div className="bg-white rounded-xl border shadow-sm p-4 print-card">
+              <div className="space-y-2">
+                {stats.sorted.map(m => {
+                  const folgas = stats.totalDays - m.count;
+                  const pct = stats.totalDays > 0 ? (m.count / stats.totalDays) * 100 : 0;
+                  return (
+                    <div key={m.id} className="flex items-center gap-3 avoid-break">
+                      <div className="w-36 truncate text-sm font-medium text-slate-700 shrink-0">{m.name}</div>
+                      <div className="flex-1 bg-slate-100 rounded-full h-6 overflow-hidden relative">
+                        <div
+                          className={`h-full rounded-full transition-all ${getBarColor(m.count, stats.totalDays)}`}
+                          style={{ width: `${Math.max(pct, m.count > 0 ? 8 : 0)}%` }}>
+                        </div>
+                        <span className="absolute inset-0 flex items-center justify-between px-3 text-xs font-bold text-slate-700">
+                          <span>{m.count}/{stats.totalDays} {m.count === 1 ? 'dia' : 'dias'}</span>
+                          <span className="text-slate-500 text-[10px]">
+                            {m.count === 0 ? 'sem escala' : `${folgas} ${folgas === 1 ? 'folga' : 'folgas'}`}
+                          </span>
+                        </span>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+              <div className="text-xs text-slate-500 mt-4 pt-3 border-t flex flex-wrap gap-3">
+                <span className="flex items-center gap-1"><span className="w-3 h-3 bg-emerald-500 rounded inline-block"></span> Saudável (≥2 folgas)</span>
+                <span className="flex items-center gap-1"><span className="w-3 h-3 bg-amber-500 rounded inline-block"></span> Atenção (1 folga)</span>
+                <span className="flex items-center gap-1"><span className="w-3 h-3 bg-rose-500 rounded inline-block"></span> Sobrecarga (sem folga)</span>
+                <span className="flex items-center gap-1"><span className="w-3 h-3 bg-slate-300 rounded inline-block"></span> Sem escala</span>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    );
+
+    // ================================================================
+    // DISPONIBILIDADE
+    // ================================================================
+    const filteredMembers = useMemo(() => {
+      const q = memberSearch.trim().toLowerCase();
+      if (!q) return members;
+      return members.filter(m => m.name.toLowerCase().includes(q));
+    }, [members, memberSearch]);
+
+    const renderAvailability = () => (
+      <div className="space-y-6 animate-fade-in">
+        {renderDateControls("Disponibilidade",
+          <button onClick={() => setShowAddEventModal(true)} className="flex items-center gap-2 bg-emerald-600 text-white px-3 py-2 rounded-lg text-sm font-medium hover:bg-emerald-700 transition shadow">
+            <CalendarPlus size={16} /> Adicionar Data
+          </button>
+        )}
+        <p className="text-slate-500 -mt-4">Marque quem <strong>NÃO</strong> pode servir.</p>
+
+        <div className="relative max-w-sm">
+          <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+          <input
+            value={memberSearch}
+            onChange={e => setMemberSearch(e.target.value)}
+            placeholder="Buscar membro..."
+            className="w-full pl-10 pr-3 py-2 border rounded-lg text-sm bg-white shadow-sm" />
+        </div>
+
+        <div className="bg-white rounded-xl border shadow-sm overflow-x-auto">
+          <table className="w-full text-sm">
+            <thead className="bg-slate-50 border-b text-slate-500 uppercase text-xs">
+              <tr>
+                <th className="px-4 md:px-6 py-3 text-left sticky left-0 bg-slate-50">Nome</th>
+                {dates.map((d, i) => (
+                  <th key={i} className="px-2 py-3 text-center">
+                    <div className="text-[10px] text-slate-400">{formatWeekday(d.date)}</div>
+                    <div>{formatDateShort(d.date)}</div>
+                    {!d.isAuto && <div className="text-[9px] text-purple-500 uppercase">{EVENT_TYPES[d.type].icon}</div>}
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody className="divide-y">
+              {filteredMembers.map(m => (
+                <tr key={m.id} className="hover:bg-slate-50">
+                  <td className="px-4 md:px-6 py-2 font-medium sticky left-0 bg-white whitespace-nowrap">{m.name}</td>
+                  {dates.map((d, i) => {
+                    const ds = d.dateStr;
+                    const un = isUnavailable(ds, m.id);
+                    return (
+                      <td key={i} className="px-2 py-2 text-center">
+                        <button onClick={() => toggleUnavailability(ds, m.id)}
+                          className={`w-8 h-8 rounded flex items-center justify-center mx-auto transition ${un ? 'bg-rose-100 text-rose-600 hover:bg-rose-200' : 'bg-emerald-50 text-emerald-400 hover:bg-emerald-100'}`}>
+                          {un ? <X size={16} /> : <CheckCircle2 size={16} />}
+                        </button>
+                      </td>
+                    );
+                  })}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        {filteredMembers.length === 0 && <p className="text-center text-slate-400 py-6">Nenhum membro encontrado</p>}
+      </div>
+    );
+
+    // ================================================================
+    // MONTAR ESCALA
+    // ================================================================
+    const renderSchedule = () => (
+      <div className="space-y-6 animate-fade-in">
+        {renderDateControls("Montar Escala",
+          <button onClick={() => setShowAddEventModal(true)} className="flex items-center gap-2 bg-emerald-600 text-white px-3 py-2 rounded-lg text-sm font-medium hover:bg-emerald-700 transition shadow">
+            <CalendarPlus size={16} /> Adicionar Data
+          </button>
+        )}
+        <p className="text-slate-500 -mt-4">Selecione quem toca em cada culto. Membros com <strong>linha cortada</strong> estão indisponíveis.</p>
+
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {dates.map((d, i) => {
+            const ds = d.dateStr;
+            const cur = roster[ds] || [];
+            const evType = EVENT_TYPES[d.type] || EVENT_TYPES.sunday;
+            return (
+              <div key={i} className="bg-white rounded-xl border shadow-sm overflow-hidden">
+                <div className={`${evType.color} text-white px-4 py-3 flex justify-between items-center`}>
+                  <div className="flex items-center gap-3 min-w-0">
+                    <span className="text-2xl">{evType.icon}</span>
+                    <div className="min-w-0">
+                      <div className="text-xs opacity-90 font-medium uppercase">{formatWeekday(d.date)} {d.time && `• ${d.time}`} {!d.isAuto && '• custom'}</div>
+                      <h3 className="font-bold leading-tight truncate">{formatDateFull(d.date)}</h3>
+                      <div className="text-xs opacity-90 truncate">{d.title}</div>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2 shrink-0">
+                    <span className="bg-white/25 text-white text-xs px-2 py-1 rounded-full font-bold">{cur.length}</span>
+                    <button onClick={() => setShowNotesModal(ds)} className="p-1.5 bg-white/20 hover:bg-white/30 rounded transition" title="Adicionar nota">
+                      <StickyNote size={14} />
+                    </button>
+                    {!d.isAuto && (
+                      <button onClick={() => handleDeleteEvent(d.eventId)} className="p-1.5 bg-white/20 hover:bg-rose-500/80 rounded transition" title="Remover">
+                        <Trash2 size={14} />
+                      </button>
+                    )}
+                  </div>
+                </div>
+                {eventNotes[ds] && (
+                  <div className="bg-amber-50 border-b border-amber-200 px-4 py-2 text-sm text-amber-900 flex items-start gap-2">
+                    <StickyNote size={14} className="mt-0.5 text-amber-600 shrink-0" />
+                    <span>{eventNotes[ds]}</span>
+                  </div>
+                )}
+                <div className="p-4 space-y-3">
+                  {Object.keys(roles).map(rk => {
+                    const ms = members.filter(m => m.roles.includes(rk));
+                    if (ms.length === 0) return null;
+                    return (
+                      <div key={rk}>
+                        <h4 className="text-xs font-bold text-slate-400 uppercase mb-1.5">{roles[rk].label}</h4>
+                        <div className="flex flex-wrap gap-1.5">
+                          {ms.map(m => {
+                            const sel = isInRoster(ds, m.id, rk);
+                            const un = isUnavailable(ds, m.id);
+                            return (
+                              <button key={m.id} disabled={un && !sel} onClick={() => toggleRosterMember(ds, m.id, rk)}
+                                className={`px-2.5 py-1 text-xs border rounded transition flex items-center gap-1 ${
+                                  sel && un ? 'bg-rose-600 text-white border-rose-700 ring-2 ring-rose-300' :
+                                  sel ? 'bg-indigo-600 text-white border-indigo-600' :
+                                  un ? 'bg-slate-50 text-slate-300 line-through decoration-slate-400 cursor-not-allowed' :
+                                  'bg-white hover:border-indigo-400 text-slate-700'
+                                }`}
+                                title={un && sel ? 'CONFLITO: marcado como indisponível' : un ? 'Indisponível' : ''}>
+                                {m.name} {sel && <Check size={10} />} {sel && un && <AlertTriangle size={10} />}
+                              </button>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    );
+
+    // ================================================================
+    // MEMBROS
+    // ================================================================
+    const renderMembers = () => (
+      <div className="space-y-6 animate-fade-in">
+        <header className="flex flex-wrap justify-between items-end gap-3">
+          <div>
+            <h2 className="text-2xl font-bold">Membros</h2>
+            <p className="text-slate-500">Gerencie sua equipe.</p>
+          </div>
+          <button onClick={() => setShowAddMemberModal(true)} className="flex gap-2 bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition shadow">
+            <PlusCircle size={18} /> Novo Membro
+          </button>
+        </header>
+
+        <div className="relative max-w-sm">
+          <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+          <input value={memberSearch} onChange={e => setMemberSearch(e.target.value)} placeholder="Buscar membro..." className="w-full pl-10 pr-3 py-2 border rounded-lg text-sm bg-white shadow-sm" />
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {filteredMembers.map(m => {
+            if (editingMemberId === m.id) return (
+              <div key={m.id} className="bg-white p-4 rounded-xl border-2 border-indigo-300 shadow-md flex flex-col gap-3">
+                <input autoFocus className="border-b border-indigo-300 outline-none font-medium text-lg w-full" value={editName} onChange={e => setEditName(e.target.value)} />
+                <div>
+                  <label className="text-xs text-slate-400 font-bold uppercase">Funções</label>
+                  <div className="flex flex-wrap gap-1 mt-1 mb-2">
+                    {editRoles.map(r => (
+                      <span key={r} onClick={() => handleRemoveRoleEdit(r)} className="cursor-pointer bg-slate-100 border text-slate-600 px-2 py-0.5 rounded-full text-xs flex items-center gap-1 hover:bg-red-50 hover:text-red-500 transition">
+                        {roles[r]?.label} <X size={10} />
+                      </span>
+                    ))}
+                  </div>
+                  <select className="w-full text-sm border p-1 rounded" onChange={e => { if (e.target.value) handleAddRoleEdit(e.target.value); e.target.value = ''; }}>
+                    <option value="">+ Adicionar</option>
+                    {Object.entries(roles).map(([k, v]) => <option key={k} value={k}>{v.label}</option>)}
+                  </select>
+                </div>
+                <div className="flex justify-end gap-2 mt-2">
+                  <button onClick={saveMemberEdit} className="bg-emerald-500 text-white px-3 py-1.5 rounded text-xs flex gap-1 font-bold shadow-sm"><Check size={14} /> Salvar</button>
+                  <button onClick={() => setEditingMemberId(null)} className="bg-slate-100 text-slate-500 px-3 py-1.5 rounded text-xs"><X size={14} /></button>
+                </div>
+              </div>
+            );
+            return (
+              <div key={m.id} onDoubleClick={() => startEditingMember(m)} className="bg-white p-4 rounded-xl border shadow-sm flex flex-col justify-between hover:border-indigo-300 cursor-pointer group">
+                <div className="flex items-start justify-between">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-full bg-indigo-100 text-indigo-700 flex items-center justify-center font-bold text-sm border-2 border-white shadow-sm">{m.name[0]}</div>
+                    <h4 className="font-bold text-slate-800">{m.name}</h4>
+                  </div>
+                  <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition">
+                    <button onClick={e => { e.stopPropagation(); startEditingMember(m); }} className="p-1.5 text-indigo-500 hover:bg-indigo-50 rounded"><Pencil size={16} /></button>
+                    <button onClick={e => { e.stopPropagation(); handleDeleteMember(m.id); }} className="p-1.5 text-rose-500 hover:bg-rose-50 rounded"><Trash2 size={16} /></button>
+                  </div>
+                </div>
+                <div className="mt-3 flex flex-wrap gap-1">
+                  {m.roles.map(r => (
+                    <span key={r} className={`text-[10px] px-2 py-0.5 rounded-full font-bold ${roles[r]?.color || 'bg-gray-100 text-gray-500'}`}>
+                      {roles[r]?.label}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+
+        {showAddMemberModal && (
+          <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+            <div className="bg-white p-6 rounded-xl w-full max-w-md shadow-2xl space-y-4">
+              <h3 className="font-bold text-lg text-slate-800">Novo Integrante</h3>
+              <div>
+                <label className="text-xs text-slate-500 font-bold mb-1 block">Nome</label>
+                <input className="w-full border p-2.5 rounded-lg" value={newMemberName} onChange={e => setNewMemberName(e.target.value)} autoFocus />
+              </div>
+              <div>
+                <label className="text-xs text-slate-500 font-bold mb-1 block">Funções</label>
+                <div className="flex flex-wrap gap-2 mb-2 p-2 border rounded-lg min-h-[40px] bg-slate-50">
+                  {newMemberRoles.map(r => (
+                    <span key={r} onClick={() => handleRemoveRoleFromNewMember(r)} className="cursor-pointer bg-white border shadow-sm px-2 py-1 rounded-md text-xs font-medium flex items-center gap-1 hover:text-red-500">
+                      {roles[r]?.label} <X size={12} />
+                    </span>
+                  ))}
+                </div>
+                <select className="w-full border p-2.5 rounded-lg text-sm" onChange={e => { if (e.target.value) handleAddRoleToNewMember(e.target.value); e.target.value = ''; }}>
+                  <option value="">+ Selecionar</option>
+                  {Object.entries(roles).map(([k, v]) => <option key={k} value={k}>{v.label}</option>)}
+                </select>
+              </div>
+              <div className="flex gap-3 pt-2">
+                <button onClick={handleAddMember} className="flex-1 bg-indigo-600 text-white py-2.5 rounded-lg font-medium shadow">Salvar</button>
+                <button onClick={() => setShowAddMemberModal(false)} className="flex-1 bg-slate-100 text-slate-600 py-2.5 rounded-lg font-medium">Cancelar</button>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+    );
+
+    // ================================================================
+    // CATEGORIAS
+    // ================================================================
+    const renderCategories = () => (
+      <div className="space-y-6 animate-fade-in">
+        <header className="flex justify-between items-end">
+          <div>
+            <h2 className="text-2xl font-bold">Categorias</h2>
+            <p className="text-slate-500">Gerencie funções.</p>
+          </div>
+          <button onClick={() => setShowAddCategoryModal(true)} className="flex gap-2 bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition shadow">
+            <PlusCircle size={18} /> Nova
+          </button>
+        </header>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          {Object.entries(roles).map(([k, v]) => {
+            if (editingCategoryKey === k) return (
+              <div key={k} className="bg-white p-4 rounded-xl border-2 border-indigo-300 shadow-md">
+                <input autoFocus className="w-full border-b mb-2 outline-none" value={editCategoryName} onChange={e => setEditCategoryName(e.target.value)} />
+                <div className="flex flex-wrap gap-1 mb-2">
+                  {COLOR_OPTIONS.map(c => (
+                    <button key={c.value} onClick={() => setEditCategoryColor(c.value)}
+                      className={`w-5 h-5 rounded-full border ${c.value.split(' ')[0]} ${editCategoryColor === c.value ? 'ring-2 ring-indigo-500' : ''}`} />
+                  ))}
+                </div>
+                <div className="flex justify-end gap-2">
+                  <button onClick={saveCategoryEdit} className="text-xs bg-emerald-500 text-white px-2 py-1 rounded">Salvar</button>
+                </div>
+              </div>
+            );
+            return (
+              <div key={k} onDoubleClick={() => startEditingCategory(k)} className="bg-white p-4 rounded-xl border shadow-sm flex justify-between items-center hover:border-indigo-300 cursor-pointer group">
+                <div className="flex items-center gap-3">
+                  <div className={`w-10 h-10 rounded-lg flex items-center justify-center font-bold text-white ${v.color.split(' ')[0]}`}><Tags size={20} /></div>
+                  <h4 className="font-medium">{v.label}</h4>
+                </div>
+                <div className="opacity-0 group-hover:opacity-100 flex gap-1">
+                  <button onClick={e => { e.stopPropagation(); startEditingCategory(k); }} className="p-2 text-indigo-500"><Pencil size={16} /></button>
+                  <button onClick={e => { e.stopPropagation(); handleDeleteCategory(k); }} className="p-2 text-rose-500"><Trash2 size={16} /></button>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+        {showAddCategoryModal && (
+          <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+            <div className="bg-white p-6 rounded-xl w-full max-w-md shadow-2xl space-y-4">
+              <h3 className="font-bold text-lg">Nova Categoria</h3>
+              <input placeholder="Nome" className="w-full border p-2 rounded" value={newCategoryName} onChange={e => setNewCategoryName(e.target.value)} autoFocus />
+              <div className="flex gap-2 flex-wrap">
+                {COLOR_OPTIONS.map(c => (
+                  <button key={c.value} onClick={() => setNewCategoryColor(c.value)}
+                    className={`w-8 h-8 rounded-full border ${c.value.split(' ')[0]} ${newCategoryColor === c.value ? 'ring-2 ring-indigo-500' : ''}`} />
+                ))}
+              </div>
+              <div className="flex gap-2">
+                <button onClick={handleAddCategory} className="flex-1 bg-indigo-600 text-white py-2 rounded">Salvar</button>
+                <button onClick={() => setShowAddCategoryModal(false)} className="flex-1 bg-slate-100 py-2 rounded">Cancelar</button>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+    );
+
+    // ================================================================
+    // SIDEBAR
+    // ================================================================
+    function SidebarItem({ icon, label, id }) {
+      const Icons = { Calendar, CalendarCheck, Users, Tags, Music };
+      const IconComp = Icons[icon] || Music;
+      return (
+        <button onClick={() => { setActiveTab(id); setIsMobileMenuOpen(false); }}
+          className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition ${activeTab === id ? 'bg-slate-100 text-slate-900' : 'text-slate-600 hover:bg-slate-50'}`}>
+          <IconComp size={20} /> {label}
+        </button>
+      );
+    }
+
+    return (
+      <div className="app-shell flex h-screen bg-slate-50 font-sans text-slate-800 overflow-hidden">
+        {/* Sidebar Desktop */}
+        <aside className="hidden md:flex flex-col w-64 bg-white border-r h-full no-print">
+          <div className="p-6 flex items-center gap-3 border-b">
+            <div className="w-10 h-10 bg-slate-900 rounded-xl flex items-center justify-center text-white"><Music size={20} /></div>
+            <div>
+              <h1 className="font-bold text-lg">LouvorApp</h1>
+              <p className="text-xs text-slate-400">Pro Edition</p>
+            </div>
+          </div>
+          <nav className="p-4 space-y-1">
+            <SidebarItem icon="Calendar" label="Visão Geral" id="dashboard" />
+            <SidebarItem icon="CalendarCheck" label="Disponibilidade" id="availability" />
+            <SidebarItem icon="Users" label="Montar Escala" id="schedule" />
+            <SidebarItem icon="Users" label="Membros" id="members" />
+            <SidebarItem icon="Tags" label="Categorias" id="categories" />
+          </nav>
+          <div className="mt-auto p-4 border-t text-xs text-slate-400">
+            <p className="flex items-center gap-1"><Save size={12} /> Auto-save ativo</p>
+            <p className="mt-1">v2.1 • Offline Pro</p>
+          </div>
+        </aside>
+
+        {/* Mobile Menu */}
+        {isMobileMenuOpen && <div className="fixed inset-0 bg-black/50 z-40 md:hidden" onClick={() => setIsMobileMenuOpen(false)} />}
+        {isMobileMenuOpen && (
+          <div className="fixed inset-y-0 left-0 w-64 bg-white z-50 p-4 shadow-2xl no-print">
+            <div className="flex justify-between mb-6">
+              <h2 className="font-bold">Menu</h2>
+              <button onClick={() => setIsMobileMenuOpen(false)}><X /></button>
+            </div>
+            <nav className="space-y-2">
+              <SidebarItem icon="Calendar" label="Visão Geral" id="dashboard" />
+              <SidebarItem icon="CalendarCheck" label="Disponibilidade" id="availability" />
+              <SidebarItem icon="Users" label="Montar Escala" id="schedule" />
+              <SidebarItem icon="Users" label="Membros" id="members" />
+              <SidebarItem icon="Tags" label="Categorias" id="categories" />
+            </nav>
+          </div>
+        )}
+
+        {/* Conteúdo principal */}
+        <main className="app-main flex-1 flex flex-col h-full overflow-hidden">
+          <header className="h-16 bg-white border-b flex items-center justify-between px-4 md:px-8 shadow-sm shrink-0 no-print">
+            <div className="flex items-center gap-4">
+              <button className="md:hidden" onClick={() => setIsMobileMenuOpen(true)}><Menu /></button>
+              <h2 className="font-bold text-lg hidden md:block">Ministério de Louvor</h2>
+            </div>
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+                className="w-9 h-9 flex items-center justify-center rounded-lg border bg-white hover:bg-slate-50 text-slate-700 transition shadow-sm"
+                title={theme === 'dark' ? 'Mudar para tema claro' : 'Mudar para tema escuro'}>
+                {theme === 'dark' ? <Sun size={16} /> : <Moon size={16} />}
+              </button>
+              <button onClick={handleSaveAs} className="flex items-center gap-2 bg-slate-900 text-white px-3 md:px-4 py-2 rounded-lg text-sm font-medium hover:bg-slate-800 transition shadow">
+                <Save size={16} /> <span className="hidden sm:inline">Salvar / Baixar</span>
+              </button>
+              <div className="w-9 h-9 bg-slate-200 rounded-full flex items-center justify-center text-slate-800 font-bold border-2 border-white shadow">L</div>
+            </div>
+          </header>
+          <div className="app-content flex-1 overflow-y-auto p-4 md:p-8 pb-20">
+            <div className="max-w-7xl mx-auto">
+              {activeTab === 'dashboard' && renderDashboard()}
+              {activeTab === 'availability' && renderAvailability()}
+              {activeTab === 'schedule' && renderSchedule()}
+              {activeTab === 'members' && renderMembers()}
+              {activeTab === 'categories' && renderCategories()}
+            </div>
+          </div>
+        </main>
+
+        {/* MODAL: Adicionar Evento */}
+        {showAddEventModal && (
+          <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4 no-print">
+            <div className="bg-white p-6 rounded-xl w-full max-w-md shadow-2xl space-y-4">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 bg-emerald-100 text-emerald-600 rounded-lg flex items-center justify-center"><CalendarPlus size={20} /></div>
+                <div>
+                  <h3 className="font-bold text-lg">Adicionar Data</h3>
+                  <p className="text-xs text-slate-500">Crie um culto, ensaio ou evento avulso</p>
+                </div>
+              </div>
+              <div>
+                <label className="text-xs text-slate-500 font-bold mb-1 block">Tipo de Evento</label>
+                <div className="grid grid-cols-2 gap-2">
+                  {Object.entries(EVENT_TYPES).map(([k, v]) => (
+                    <button key={k} type="button" onClick={() => setNewEventType(k)}
+                      className={`px-3 py-2 rounded-lg text-sm font-medium border transition flex items-center gap-2 ${newEventType === k ? `${v.color} text-white border-transparent shadow` : 'bg-white text-slate-700 hover:border-indigo-400'}`}>
+                      <span>{v.icon}</span> <span className="truncate text-xs">{v.label}</span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="text-xs text-slate-500 font-bold mb-1 block">Data</label>
+                  <input type="date" className="w-full border p-2.5 rounded-lg text-sm" value={newEventDate} onChange={e => setNewEventDate(e.target.value)} />
+                </div>
+                <div>
+                  <label className="text-xs text-slate-500 font-bold mb-1 block">Horário</label>
+                  <input type="time" className="w-full border p-2.5 rounded-lg text-sm" value={newEventTime} onChange={e => setNewEventTime(e.target.value)} />
+                </div>
+              </div>
+              <div>
+                <label className="text-xs text-slate-500 font-bold mb-1 block">Título (opcional)</label>
+                <input className="w-full border p-2.5 rounded-lg text-sm" placeholder={EVENT_TYPES[newEventType].label} value={newEventTitle} onChange={e => setNewEventTitle(e.target.value)} />
+              </div>
+              <div className="flex gap-3 pt-2">
+                <button onClick={handleAddEvent} className="flex-1 bg-emerald-600 text-white py-2.5 rounded-lg font-medium shadow hover:bg-emerald-700">Adicionar</button>
+                <button onClick={() => setShowAddEventModal(false)} className="flex-1 bg-slate-100 text-slate-600 py-2.5 rounded-lg font-medium">Cancelar</button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* MODAL: Notas do Evento */}
+        {showNotesModal && (
+          <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4 no-print">
+            <div className="bg-white p-6 rounded-xl w-full max-w-md shadow-2xl space-y-4">
+              <h3 className="font-bold text-lg flex items-center gap-2"><StickyNote size={20} className="text-amber-500" /> Nota do Culto</h3>
+              <p className="text-xs text-slate-500">Data: <strong>{showNotesModal}</strong></p>
+              <textarea
+                className="w-full border p-3 rounded-lg text-sm h-32 resize-none"
+                placeholder="Ex: Tema do culto, observações para a equipe, batismo após o culto..."
+                value={eventNotes[showNotesModal] || ''}
+                onChange={e => setEventNotes({ ...eventNotes, [showNotesModal]: e.target.value })}
+              />
+              <div className="flex gap-3">
+                <button onClick={() => { setShowNotesModal(null); showToast('Nota salva!'); }} className="flex-1 bg-indigo-600 text-white py-2.5 rounded-lg font-medium shadow">Salvar</button>
+                {eventNotes[showNotesModal] && (
+                  <button onClick={() => { const n = { ...eventNotes }; delete n[showNotesModal]; setEventNotes(n); setShowNotesModal(null); }}
+                    className="px-4 bg-rose-50 text-rose-600 py-2.5 rounded-lg font-medium">
+                    Apagar
+                  </button>
+                )}
+                <button onClick={() => setShowNotesModal(null)} className="flex-1 bg-slate-100 text-slate-600 py-2.5 rounded-lg font-medium">Cancelar</button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* MODAL: Exportar Imagem (Fallback para Cópia) */}
+        {exportImageModal && (
+          <div className="fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4 no-print flex-col">
+            <div className="bg-white p-4 rounded-xl max-w-4xl w-full max-h-[95vh] flex flex-col shadow-2xl">
+              <div className="flex justify-between items-center mb-3 shrink-0">
+                <h3 className="font-bold text-lg flex items-center gap-2"><ImageIcon size={20} className="text-indigo-500" /> Copiar Imagem</h3>
+                <button onClick={() => setExportImageModal(null)} className="p-1 hover:bg-slate-100 rounded-full"><X size={20} /></button>
+              </div>
+              <div className="bg-amber-50 border border-amber-200 text-amber-800 p-3 rounded-lg mb-4 text-sm shrink-0">
+                <strong>Atenção:</strong> Seu navegador não permite a cópia automática de imagens por segurança. 
+                Para compartilhar, <strong>clique com o botão direito na imagem abaixo</strong> (ou segure apertado no celular) e selecione <strong>"Copiar imagem"</strong>, depois é só colar no WhatsApp!
+              </div>
+              <div className="flex-1 overflow-y-auto bg-slate-100 rounded border flex justify-center p-4">
+                <img src={exportImageModal} alt="Escala Gerada" className="max-w-full h-auto shadow-sm bg-white" style={{ objectFit: 'contain' }} />
+              </div>
+              <div className="mt-4 flex gap-3 shrink-0">
+                 <button onClick={() => {
+                   const a = document.createElement('a');
+                   a.href = exportImageModal; a.download = `Escala_Louvor.png`;
+                   a.click();
+                 }} className="flex-1 bg-indigo-600 text-white py-2.5 rounded-lg font-medium shadow hover:bg-indigo-700">Baixar Imagem</button>
+                 <button onClick={() => setExportImageModal(null)} className="flex-1 bg-slate-100 text-slate-600 py-2.5 rounded-lg font-medium hover:bg-slate-200">Fechar</button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* MODAL: Texto WhatsApp (fallback se clipboard falhar) */}
+        {showTextModal && (
+          <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4 no-print">
+            <div className="bg-white p-6 rounded-xl w-full max-w-2xl shadow-2xl space-y-4">
+              <div className="flex items-center justify-between">
+                <h3 className="font-bold text-lg flex items-center gap-2"><FileText size={20} className="text-blue-500" /> Texto pra WhatsApp</h3>
+                <button onClick={() => setShowTextModal(null)}><X size={20} /></button>
+              </div>
+              <p className="text-xs text-slate-500">Selecione o texto abaixo e copie (Ctrl+A → Ctrl+C):</p>
+              <textarea
+                readOnly
+                onFocus={e => e.target.select()}
+                className="w-full border p-3 rounded-lg text-xs h-80 resize-none font-mono bg-slate-50"
+                value={showTextModal}
+              />
+              <div className="flex gap-3">
+                <button onClick={async () => {
+                  try { await navigator.clipboard.writeText(showTextModal); showToast('Copiado!'); setShowTextModal(null); }
+                  catch { showToast('Selecione manualmente', 'error'); }
+                }} className="flex-1 bg-blue-600 text-white py-2.5 rounded-lg font-medium shadow">Tentar copiar de novo</button>
+                <button onClick={() => setShowTextModal(null)} className="flex-1 bg-slate-100 text-slate-600 py-2.5 rounded-lg font-medium">Fechar</button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* TOAST */}
+        {toast && (
+          <div className={`fixed bottom-6 left-1/2 -translate-x-1/2 z-[60] px-4 py-3 rounded-lg shadow-2xl toast-enter no-print ${
+            toast.type === 'error' ? 'bg-rose-600 text-white' :
+            toast.type === 'info' ? 'bg-slate-800 text-white' :
+            'bg-emerald-600 text-white'
+          }`}>
+            <div className="flex items-center gap-2 text-sm font-medium">
+              {toast.type === 'error' ? <AlertTriangle size={16} /> : toast.type === 'info' ? <Sparkles size={16} /> : <CheckCircle2 size={16} />}
+              {toast.msg}
+            </div>
+          </div>
+        )}
+      </div>
+    );
+  }
+
+  ReactDOM.createRoot(document.getElementById('root')).render(React.createElement(MinistryScheduler));
+</script>
+</body>
+</html>
