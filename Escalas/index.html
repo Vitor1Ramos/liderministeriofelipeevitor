@@ -398,11 +398,10 @@
       return merged.sort((a, b) => a.date - b.date);
     }, [baseDate, customEvents, weeksToShow]);
 
-    // Grid balanceado: escolhe entre 3 ou 4 colunas pra evitar linhas órfãs
+    // Grid balanceado: Mínimo 3 cols, Escolhe entre 3 ou 4 colunas lg+ pra evitar linhas órfãs
     const optimalCols = useMemo(() => {
       const n = dates.length;
-      if (n <= 0) return 3;
-      if (n <= 3) return n;
+      if (n <= 3) return 3; // Força no mínimo 3 sempre que houver 3 ou menos
       const candidates = [3, 4];
       let best = 3, bestScore = -1;
       for (const c of candidates) {
@@ -978,7 +977,7 @@ ${sTagClose}
             </div>
 
             <div
-              className="grid grid-cols-1 sm:grid-cols-2 grid-auto-balanced gap-3"
+              className="grid grid-cols-1 sm:grid-cols-3 grid-auto-balanced gap-3"
               style={{ '--cols': optimalCols }}>
               {dates.map((d, i) => {
                 const ds = d.dateStr;
