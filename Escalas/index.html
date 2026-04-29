@@ -91,6 +91,11 @@
   .capturing .overflow-x-auto { overflow: visible !important; }
   /* Remove scrollbars during capture */
   .capturing ::-webkit-scrollbar { display: none; }
+
+  /* Grid balanceado — ativa a partir de lg+. Usa --cols (3 ou 4) para evitar linhas órfãs */
+  @media (min-width: 1024px) {
+    .grid-auto-balanced { grid-template-columns: repeat(var(--cols, 3), minmax(0, 1fr)); }
+  }
 </style>
 </head>
 <body class="bg-slate-50 text-slate-800">
@@ -131,9 +136,7 @@
     Search = createIcon('Search'), BarChart3 = createIcon('BarChart3'),
     StickyNote = createIcon('StickyNote'), Share2 = createIcon('Share2'),
     Sparkles = createIcon('Sparkles'), Eye = createIcon('Eye'),
-    Sun = createIcon('Sun'), Moon = createIcon('Moon'), FileText = createIcon('FileText'),
-    Lock = createIcon('Lock'), LockOpen = createIcon('LockOpen'),
-    Home = createIcon('Home');
+    Sun = createIcon('Sun'), Moon = createIcon('Moon'), FileText = createIcon('FileText');
 
   // ====================================================================
   // DADOS - DATA_HOLDER (não remover comentários)
@@ -284,22 +287,6 @@
     const [newEventTitle, setNewEventTitle] = useState('');
     const [newEventTime, setNewEventTime] = useState('19:30');
 
-    // ============ CONTROLE DE ACESSO ============
-    const ADMIN_PASSWORD = 'Anah@76';
-    const [editMode, setEditMode] = useState(() => {
-      try { return sessionStorage.getItem('LouvorApp:editMode') === '1'; } catch { return false; }
-    });
-    const [showPasswordModal, setShowPasswordModal] = useState(false);
-    const [passwordInput, setPasswordInput] = useState('');
-    const [passwordError, setPasswordError] = useState(false);
-
-    useEffect(() => {
-      try {
-        if (editMode) sessionStorage.setItem('LouvorApp:editMode', '1');
-        else sessionStorage.removeItem('LouvorApp:editMode');
-      } catch {}
-    }, [editMode]);
-
     // Auto-save com debounce
     useEffect(() => {
       const t = setTimeout(() => {
@@ -312,41 +299,6 @@
     const showToast = (msg, type = 'success') => {
       setToast({ msg, type });
       setTimeout(() => setToast(null), 2500);
-    };
-
-    // Helper: bloqueia ações se não estiver em modo edição
-    const requireEdit = () => {
-      if (!editMode) {
-        showToast('🔒 Modo navegação — desbloqueie pra editar', 'info');
-        return false;
-      }
-      return true;
-    };
-
-    // Toggle do cadeado: trava direto, ou pede senha pra destravar
-    const handleToggleLock = () => {
-      if (editMode) {
-        setEditMode(false);
-        showToast('🔒 Modo navegação ativado');
-      } else {
-        setPasswordInput('');
-        setPasswordError(false);
-        setShowPasswordModal(true);
-      }
-    };
-
-    const handleSubmitPassword = (e) => {
-      if (e) e.preventDefault();
-      if (passwordInput === ADMIN_PASSWORD) {
-        setEditMode(true);
-        setShowPasswordModal(false);
-        setPasswordInput('');
-        setPasswordError(false);
-        showToast('🔓 Modo edição liberado!');
-      } else {
-        setPasswordError(true);
-        setTimeout(() => setPasswordError(false), 2000);
-      }
     };
 
     // ================================================================
@@ -393,6 +345,23 @@
       return merged.sort((a, b) => a.date - b.date);
     }, [baseDate, customEvents, weeksToShow]);
 
+    // Grid balanceado: escolhe entre 3 ou 4 colunas pra evitar linhas órfãs
+    // Sempre min 3, max 4. Divisão exata vence; senão pick maior fill da última linha.
+    const optimalCols = useMemo(() => {
+      const n = dates.length;
+      if (n <= 3) return 3; // sempre min 3 cols mesmo com poucos cards
+      const candidates = [3, 4];
+      let best = 3, bestScore = -1;
+      for (const c of candidates) {
+        const remainder = n % c;
+        const score = remainder === 0 ? Infinity : remainder / c;
+        if (score > bestScore || (score === bestScore && c > best)) {
+          best = c; bestScore = score;
+        }
+      }
+      return best;
+    }, [dates.length]);
+
     // ================================================================
     // NAVEGAÇÃO DE DATAS
     // ================================================================
@@ -415,7 +384,6 @@
     };
     const handleAddMember = (e) => {
       e.preventDefault();
-      if (!requireEdit()) return;
       if (!newMemberName.trim()) return;
       const id = members.length > 0 ? Math.max(...members.map(m => m.id)) + 1 : 1;
       setMembers([...members, { id, name: newMemberName, roles: newMemberRoles }]);
@@ -424,14 +392,12 @@
       showToast('Membro adicionado!');
     };
     const handleDeleteMember = (id) => {
-      if (!requireEdit()) return;
       if (confirm('Remover este membro?')) {
         setMembers(members.filter(m => m.id !== id));
         showToast('Membro removido');
       }
     };
     const startEditingMember = (m) => {
-      if (!requireEdit()) return;
       setEditingMemberId(m.id); setEditName(m.name); setEditRoles([...m.roles]);
     };
     const handleAddRoleEdit = (rk) => {
@@ -453,7 +419,6 @@
     // ================================================================
     const handleAddCategory = (e) => {
       e.preventDefault();
-      if (!requireEdit()) return;
       if (!newCategoryName.trim()) return;
       const k = newCategoryName.toUpperCase().replace(/\s+/g, '_').normalize("NFD").replace(/[\u0300-\u036f]/g, "");
       if (roles[k]) return alert('Já existe categoria com este nome');
@@ -462,7 +427,6 @@
       showToast('Categoria adicionada!');
     };
     const handleDeleteCategory = (k) => {
-      if (!requireEdit()) return;
       if (members.some(m => m.roles.includes(k))) return alert('Categoria em uso por membros');
       if (confirm('Excluir categoria?')) {
         const r = { ...roles }; delete r[k]; setRoles(r);
@@ -470,7 +434,6 @@
       }
     };
     const startEditingCategory = (k) => {
-      if (!requireEdit()) return;
       setEditingCategoryKey(k); setEditCategoryName(roles[k].label); setEditCategoryColor(roles[k].color);
     };
     const saveCategoryEdit = () => {
@@ -484,7 +447,6 @@
     // ================================================================
     const handleAddEvent = (e) => {
       e.preventDefault();
-      if (!requireEdit()) return;
       if (!newEventDate) return;
       const id = Date.now();
       const title = newEventTitle.trim() || EVENT_TYPES[newEventType].label;
@@ -502,7 +464,6 @@
       showToast('Data adicionada!');
     };
     const handleDeleteEvent = (id) => {
-      if (!requireEdit()) return;
       if (confirm('Remover este evento?')) {
         setCustomEvents(customEvents.filter(ev => ev.id !== id));
         showToast('Evento removido');
@@ -510,17 +471,13 @@
     };
 
     // ================================================================
-    // Disponibilidade 🪫🔋 / ESCALA
+    // DISPONIBILIDADE / ESCALA
     // ================================================================
-    const toggleUnavailability = (d, id) => {
-      if (!requireEdit()) return;
-      setUnavailability(prev => {
-        const l = prev[d] || [];
-        return { ...prev, [d]: l.includes(id) ? l.filter(x => x !== id) : [...l, id] };
-      });
-    };
+    const toggleUnavailability = (d, id) => setUnavailability(prev => {
+      const l = prev[d] || [];
+      return { ...prev, [d]: l.includes(id) ? l.filter(x => x !== id) : [...l, id] };
+    });
     const toggleRosterMember = (d, id, rk) => {
-      if (!requireEdit()) return;
       const a = `${id}:${rk}`;
       setRoster(prev => {
         const l = prev[d] || [];
@@ -584,7 +541,6 @@
     // EXPORTAÇÃO: Salvar HTML, PDF (print), PNG, Copy
     // ================================================================
     const handleSaveAs = () => {
-      if (!requireEdit()) return;
       const now = new Date();
       const dStr = now.toLocaleDateString('pt-BR').replace(/\//g, '-');
       const fName = `LouvorApp_${dStr}.html`;
@@ -786,7 +742,7 @@ ${sTagClose}
         text += `\n`;
       });
 
-      // InDisponibilidade 🪫🔋s
+      // Indisponibilidades
       const unavailLines = [];
       members.forEach(m => {
         const ud = dates.filter(d => isUnavailable(d.dateStr, m.id))
@@ -794,7 +750,7 @@ ${sTagClose}
         if (ud.length > 0) unavailLines.push(`• *${m.name}:* ${ud.join(', ')}`);
       });
       if (unavailLines.length > 0) {
-        text += `━━━━━━━━━━━━━━━\n\n*✗ INDisponibilidade 🪫🔋S*\n\n`;
+        text += `━━━━━━━━━━━━━━━\n\n*✗ INDISPONIBILIDADES*\n\n`;
         text += unavailLines.join('\n') + '\n\n';
       }
 
@@ -863,11 +819,9 @@ ${sTagClose}
       <div className="space-y-6 animate-fade-in">
         {renderDateControls("Visão Geral",
           <div className="flex flex-wrap gap-2">
-            {editMode && (
-              <button onClick={() => setShowAddEventModal(true)} className="flex items-center gap-2 bg-emerald-600 text-white px-3 py-2 rounded-lg text-sm font-medium hover:bg-emerald-700 transition shadow">
-                <CalendarPlus size={16} /> Adicionar Data
-              </button>
-            )}
+            <button onClick={() => setShowAddEventModal(true)} className="flex items-center gap-2 bg-emerald-600 text-white px-3 py-2 rounded-lg text-sm font-medium hover:bg-emerald-700 transition shadow">
+              <CalendarPlus size={16} /> Adicionar Data
+            </button>
             <div className="flex flex-wrap gap-2 ml-auto">
               <button onClick={handleCopyText} className="flex items-center gap-2 bg-blue-600 text-white px-3 py-2 rounded-lg text-sm font-medium hover:bg-blue-700 transition shadow">
                 <FileText size={16} /> Copiar Texto
@@ -908,10 +862,7 @@ ${sTagClose}
 
         {/* Cards de métricas */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
-          <button
-            onClick={() => editMode ? setShowAddEventModal(true) : null}
-            disabled={!editMode}
-            className={`text-left bg-slate-900 rounded-xl p-4 md:p-5 text-white shadow-lg transition-all focus:outline-none focus:ring-2 focus:ring-slate-500 ${editMode ? 'hover:bg-slate-800 hover:-translate-y-1 cursor-pointer' : 'cursor-default opacity-95'}`}>
+          <button onClick={() => setShowAddEventModal(true)} className="text-left bg-slate-900 rounded-xl p-4 md:p-5 text-white shadow-lg hover:bg-slate-800 hover:-translate-y-1 transition-all cursor-pointer focus:outline-none focus:ring-2 focus:ring-slate-500">
             <div className="flex justify-between items-start">
               <div>
                 <p className="text-slate-300 text-xs md:text-sm font-medium mb-1">Cultos</p>
@@ -919,7 +870,7 @@ ${sTagClose}
               </div>
               <div className="bg-white/20 p-2 rounded-lg"><Calendar size={20} /></div>
             </div>
-            <p className="text-xs text-slate-300 mt-2">{editMode ? 'Clique para adicionar' : 'Visualizando'}</p>
+            <p className="text-xs text-slate-300 mt-2">Clique para adicionar</p>
           </button>
 
           <button onClick={() => setActiveTab('members')} className="text-left bg-white rounded-xl p-4 md:p-5 border shadow-sm hover:border-indigo-300 hover:shadow-md hover:-translate-y-1 transition-all cursor-pointer focus:outline-none focus:ring-2 focus:ring-indigo-500">
@@ -954,11 +905,11 @@ ${sTagClose}
                 {conflicts.length > 0 ? <AlertTriangle size={20} /> : <CheckCircle2 size={20} />}
               </div>
             </div>
-            <p className={`text-xs mt-2 ${conflicts.length > 0 ? 'text-rose-600' : 'text-emerald-600'}`}>{conflicts.length > 0 ? 'Resolver agora' : 'Ver Disponibilidade 🪫🔋'}</p>
+            <p className={`text-xs mt-2 ${conflicts.length > 0 ? 'text-rose-600' : 'text-emerald-600'}`}>{conflicts.length > 0 ? 'Resolver agora' : 'Ver disponibilidade'}</p>
           </button>
         </div>
 
-        {/* ÁREA CAPTURÁVEL: 3 páginas (Escala / Disponibilidade 🪫🔋 / Balanceamento) */}
+        {/* ÁREA CAPTURÁVEL: 3 páginas (Escala / Disponibilidade / Balanceamento) */}
         <div ref={captureRef} id="print-area" className="space-y-6 bg-slate-50 rounded-xl p-4 md:p-6">
 
           {/* ============ PÁGINA 1 — ESCALA ============ */}
@@ -979,7 +930,9 @@ ${sTagClose}
               <span className="text-xs text-slate-400 font-mono no-print">Página 1/3</span>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
+            <div
+              className="grid grid-cols-1 sm:grid-cols-3 grid-auto-balanced gap-3"
+              style={{ '--cols': optimalCols }}>
               {dates.map((d, i) => {
                 const ds = d.dateStr;
                 const assigns = roster[ds] || [];
@@ -1034,22 +987,20 @@ ${sTagClose}
                         })
                       )}
                     </div>
-                    {editMode && (
-                      <div className="mt-2 pt-2 border-t flex justify-between items-center no-print">
+                    <div className="mt-2 pt-2 border-t flex justify-between items-center no-print">
+                      <button
+                        onClick={() => setShowNotesModal(ds)}
+                        className="text-xs text-slate-500 hover:text-indigo-600 flex items-center gap-1">
+                        <StickyNote size={12} /> {note ? 'Editar nota' : 'Nota'}
+                      </button>
+                      {!d.isAuto && (
                         <button
-                          onClick={() => setShowNotesModal(ds)}
-                          className="text-xs text-slate-500 hover:text-indigo-600 flex items-center gap-1">
-                          <StickyNote size={12} /> {note ? 'Editar nota' : 'Nota'}
+                          onClick={() => handleDeleteEvent(d.eventId)}
+                          className="text-xs text-rose-500 hover:text-rose-700 flex items-center gap-1">
+                          <Trash2 size={12} /> Remover
                         </button>
-                        {!d.isAuto && (
-                          <button
-                            onClick={() => handleDeleteEvent(d.eventId)}
-                            className="text-xs text-rose-500 hover:text-rose-700 flex items-center gap-1">
-                            <Trash2 size={12} /> Remover
-                          </button>
-                        )}
-                      </div>
-                    )}
+                      )}
+                    </div>
                   </div>
                 );
               })}
@@ -1058,7 +1009,7 @@ ${sTagClose}
 
           <div className="h-8"></div> {/* Spacer visual entre sessoes */}
 
-          {/* ============ PÁGINA 2 — Disponibilidade 🪫🔋 ============ */}
+          {/* ============ PÁGINA 2 — DISPONIBILIDADE ============ */}
           <div className="print-page space-y-3">
             <div className="flex items-center justify-between border-b-2 border-emerald-600 pb-3 avoid-break">
               <div className="flex items-center gap-3">
@@ -1066,7 +1017,7 @@ ${sTagClose}
                   <CalendarCheck size={20} />
                 </div>
                 <div>
-                  <h2 className="font-bold text-xl text-slate-800">Disponibilidade 🪫🔋</h2>
+                  <h2 className="font-bold text-xl text-slate-800">Disponibilidade</h2>
                   <p className="text-xs text-slate-500">✓ disponível • ✗ indisponível • ● escalado • ⚠ conflito</p>
                 </div>
               </div>
@@ -1183,7 +1134,7 @@ ${sTagClose}
     );
 
     // ================================================================
-    // Disponibilidade 🪫🔋
+    // DISPONIBILIDADE
     // ================================================================
     const filteredMembers = useMemo(() => {
       const q = memberSearch.trim().toLowerCase();
@@ -1193,12 +1144,10 @@ ${sTagClose}
 
     const renderAvailability = () => (
       <div className="space-y-6 animate-fade-in">
-        {renderDateControls("Disponibilidade 🪫🔋",
-          editMode ? (
-            <button onClick={() => setShowAddEventModal(true)} className="flex items-center gap-2 bg-emerald-600 text-white px-3 py-2 rounded-lg text-sm font-medium hover:bg-emerald-700 transition shadow">
-              <CalendarPlus size={16} /> Adicionar Data
-            </button>
-          ) : null
+        {renderDateControls("Disponibilidade",
+          <button onClick={() => setShowAddEventModal(true)} className="flex items-center gap-2 bg-emerald-600 text-white px-3 py-2 rounded-lg text-sm font-medium hover:bg-emerald-700 transition shadow">
+            <CalendarPlus size={16} /> Adicionar Data
+          </button>
         )}
         <p className="text-slate-500 -mt-4">Marque quem <strong>NÃO</strong> pode servir.</p>
 
@@ -1234,8 +1183,8 @@ ${sTagClose}
                     const un = isUnavailable(ds, m.id);
                     return (
                       <td key={i} className="px-2 py-2 text-center">
-                        <button onClick={() => toggleUnavailability(ds, m.id)} disabled={!editMode}
-                          className={`w-8 h-8 rounded flex items-center justify-center mx-auto transition ${un ? 'bg-rose-100 text-rose-600 hover:bg-rose-200' : 'bg-emerald-50 text-emerald-400 hover:bg-emerald-100'} ${editMode ? '' : 'cursor-not-allowed opacity-80'}`}>
+                        <button onClick={() => toggleUnavailability(ds, m.id)}
+                          className={`w-8 h-8 rounded flex items-center justify-center mx-auto transition ${un ? 'bg-rose-100 text-rose-600 hover:bg-rose-200' : 'bg-emerald-50 text-emerald-400 hover:bg-emerald-100'}`}>
                           {un ? <X size={16} /> : <CheckCircle2 size={16} />}
                         </button>
                       </td>
@@ -1256,11 +1205,9 @@ ${sTagClose}
     const renderSchedule = () => (
       <div className="space-y-6 animate-fade-in">
         {renderDateControls("Montar Escala",
-          editMode ? (
-            <button onClick={() => setShowAddEventModal(true)} className="flex items-center gap-2 bg-emerald-600 text-white px-3 py-2 rounded-lg text-sm font-medium hover:bg-emerald-700 transition shadow">
-              <CalendarPlus size={16} /> Adicionar Data
-            </button>
-          ) : null
+          <button onClick={() => setShowAddEventModal(true)} className="flex items-center gap-2 bg-emerald-600 text-white px-3 py-2 rounded-lg text-sm font-medium hover:bg-emerald-700 transition shadow">
+            <CalendarPlus size={16} /> Adicionar Data
+          </button>
         )}
         <p className="text-slate-500 -mt-4">Selecione quem toca em cada culto. Membros com <strong>linha cortada</strong> estão indisponíveis.</p>
 
@@ -1282,17 +1229,13 @@ ${sTagClose}
                   </div>
                   <div className="flex items-center gap-2 shrink-0">
                     <span className="bg-white/25 text-white text-xs px-2 py-1 rounded-full font-bold">{cur.length}</span>
-                    {editMode && (
-                      <>
-                        <button onClick={() => setShowNotesModal(ds)} className="p-1.5 bg-white/20 hover:bg-white/30 rounded transition" title="Adicionar nota">
-                          <StickyNote size={14} />
-                        </button>
-                        {!d.isAuto && (
-                          <button onClick={() => handleDeleteEvent(d.eventId)} className="p-1.5 bg-white/20 hover:bg-rose-500/80 rounded transition" title="Remover">
-                            <Trash2 size={14} />
-                          </button>
-                        )}
-                      </>
+                    <button onClick={() => setShowNotesModal(ds)} className="p-1.5 bg-white/20 hover:bg-white/30 rounded transition" title="Adicionar nota">
+                      <StickyNote size={14} />
+                    </button>
+                    {!d.isAuto && (
+                      <button onClick={() => handleDeleteEvent(d.eventId)} className="p-1.5 bg-white/20 hover:bg-rose-500/80 rounded transition" title="Remover">
+                        <Trash2 size={14} />
+                      </button>
                     )}
                   </div>
                 </div>
@@ -1314,14 +1257,14 @@ ${sTagClose}
                             const sel = isInRoster(ds, m.id, rk);
                             const un = isUnavailable(ds, m.id);
                             return (
-                              <button key={m.id} disabled={!editMode || (un && !sel)} onClick={() => toggleRosterMember(ds, m.id, rk)}
+                              <button key={m.id} disabled={un && !sel} onClick={() => toggleRosterMember(ds, m.id, rk)}
                                 className={`px-2.5 py-1 text-xs border rounded transition flex items-center gap-1 ${
                                   sel && un ? 'bg-rose-600 text-white border-rose-700 ring-2 ring-rose-300' :
                                   sel ? 'bg-indigo-600 text-white border-indigo-600' :
                                   un ? 'bg-slate-50 text-slate-300 line-through decoration-slate-400 cursor-not-allowed' :
                                   'bg-white hover:border-indigo-400 text-slate-700'
-                                } ${!editMode ? 'cursor-not-allowed opacity-90' : ''}`}
-                                title={!editMode ? '🔒 Modo navegação — desbloqueie pra editar' : un && sel ? 'CONFLITO: marcado como indisponível' : un ? 'Indisponível' : ''}>
+                                }`}
+                                title={un && sel ? 'CONFLITO: marcado como indisponível' : un ? 'Indisponível' : ''}>
                                 {m.name} {sel && <Check size={10} />} {sel && un && <AlertTriangle size={10} />}
                               </button>
                             );
@@ -1348,11 +1291,9 @@ ${sTagClose}
             <h2 className="text-2xl font-bold">Membros</h2>
             <p className="text-slate-500">Gerencie sua equipe.</p>
           </div>
-          {editMode && (
-            <button onClick={() => setShowAddMemberModal(true)} className="flex gap-2 bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition shadow">
-              <PlusCircle size={18} /> Novo Membro
-            </button>
-          )}
+          <button onClick={() => setShowAddMemberModal(true)} className="flex gap-2 bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition shadow">
+            <PlusCircle size={18} /> Novo Membro
+          </button>
         </header>
 
         <div className="relative max-w-sm">
@@ -1392,12 +1333,10 @@ ${sTagClose}
                     <div className="w-10 h-10 rounded-full bg-indigo-100 text-indigo-700 flex items-center justify-center font-bold text-sm border-2 border-white shadow-sm">{m.name[0]}</div>
                     <h4 className="font-bold text-slate-800">{m.name}</h4>
                   </div>
-                  {editMode && (
-                    <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition">
-                      <button onClick={e => { e.stopPropagation(); startEditingMember(m); }} className="p-1.5 text-indigo-500 hover:bg-indigo-50 rounded"><Pencil size={16} /></button>
-                      <button onClick={e => { e.stopPropagation(); handleDeleteMember(m.id); }} className="p-1.5 text-rose-500 hover:bg-rose-50 rounded"><Trash2 size={16} /></button>
-                    </div>
-                  )}
+                  <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition">
+                    <button onClick={e => { e.stopPropagation(); startEditingMember(m); }} className="p-1.5 text-indigo-500 hover:bg-indigo-50 rounded"><Pencil size={16} /></button>
+                    <button onClick={e => { e.stopPropagation(); handleDeleteMember(m.id); }} className="p-1.5 text-rose-500 hover:bg-rose-50 rounded"><Trash2 size={16} /></button>
+                  </div>
                 </div>
                 <div className="mt-3 flex flex-wrap gap-1">
                   {m.roles.map(r => (
@@ -1453,7 +1392,7 @@ ${sTagClose}
             <h2 className="text-2xl font-bold">Categorias</h2>
             <p className="text-slate-500">Gerencie funções.</p>
           </div>
-          <button onClick={() => setShowAddCategoryModal(true)} style={editMode ? {} : { display: 'none' }} className="flex gap-2 bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition shadow">
+          <button onClick={() => setShowAddCategoryModal(true)} className="flex gap-2 bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition shadow">
             <PlusCircle size={18} /> Nova
           </button>
         </header>
@@ -1479,12 +1418,10 @@ ${sTagClose}
                   <div className={`w-10 h-10 rounded-lg flex items-center justify-center font-bold text-white ${v.color.split(' ')[0]}`}><Tags size={20} /></div>
                   <h4 className="font-medium">{v.label}</h4>
                 </div>
-                {editMode && (
-                  <div className="opacity-0 group-hover:opacity-100 flex gap-1">
-                    <button onClick={e => { e.stopPropagation(); startEditingCategory(k); }} className="p-2 text-indigo-500"><Pencil size={16} /></button>
-                    <button onClick={e => { e.stopPropagation(); handleDeleteCategory(k); }} className="p-2 text-rose-500"><Trash2 size={16} /></button>
-                  </div>
-                )}
+                <div className="opacity-0 group-hover:opacity-100 flex gap-1">
+                  <button onClick={e => { e.stopPropagation(); startEditingCategory(k); }} className="p-2 text-indigo-500"><Pencil size={16} /></button>
+                  <button onClick={e => { e.stopPropagation(); handleDeleteCategory(k); }} className="p-2 text-rose-500"><Trash2 size={16} /></button>
+                </div>
               </div>
             );
           })}
@@ -1537,17 +1474,14 @@ ${sTagClose}
           </div>
           <nav className="p-4 space-y-1">
             <SidebarItem icon="Calendar" label="Visão Geral" id="dashboard" />
-            <SidebarItem icon="CalendarCheck" label="Disponibilidade 🪫🔋" id="availability" />
+            <SidebarItem icon="CalendarCheck" label="Disponibilidade" id="availability" />
             <SidebarItem icon="Users" label="Montar Escala" id="schedule" />
             <SidebarItem icon="Users" label="Membros" id="members" />
             <SidebarItem icon="Tags" label="Categorias" id="categories" />
           </nav>
-          <div className="mt-auto p-4 border-t text-xs text-slate-400 space-y-1">
+          <div className="mt-auto p-4 border-t text-xs text-slate-400">
             <p className="flex items-center gap-1"><Save size={12} /> Auto-save ativo</p>
-            <p className={`flex items-center gap-1 font-medium ${editMode ? 'text-emerald-600' : 'text-rose-600'}`}>
-              {editMode ? <><LockOpen size={12} /> Edição liberada</> : <><Lock size={12} /> Modo navegação</>}
-            </p>
-            <p>v2.2 • Offline Pro</p>
+            <p className="mt-1">v2.1 • Offline Pro</p>
           </div>
         </aside>
 
@@ -1561,7 +1495,7 @@ ${sTagClose}
             </div>
             <nav className="space-y-2">
               <SidebarItem icon="Calendar" label="Visão Geral" id="dashboard" />
-              <SidebarItem icon="CalendarCheck" label="Disponibilidade 🪫🔋" id="availability" />
+              <SidebarItem icon="CalendarCheck" label="Disponibilidade" id="availability" />
               <SidebarItem icon="Users" label="Montar Escala" id="schedule" />
               <SidebarItem icon="Users" label="Membros" id="members" />
               <SidebarItem icon="Tags" label="Categorias" id="categories" />
@@ -1578,49 +1512,19 @@ ${sTagClose}
             </div>
             <div className="flex items-center gap-2">
               <button
-                onClick={() => setActiveTab('dashboard')}
-                className={`w-9 h-9 flex items-center justify-center rounded-lg border transition shadow-sm ${activeTab === 'dashboard'
-                  ? 'bg-indigo-600 text-white border-indigo-600 hover:bg-indigo-700'
-                  : 'bg-white text-slate-700 hover:bg-slate-50'}`}
-                title="Voltar para Visão Geral">
-                <Home size={16} />
-              </button>
-              <button
-                onClick={handleToggleLock}
-                className={`w-9 h-9 flex items-center justify-center rounded-lg border transition shadow-sm ${editMode
-                  ? 'bg-emerald-50 border-emerald-300 text-emerald-700 hover:bg-emerald-100'
-                  : 'bg-rose-50 border-rose-300 text-rose-700 hover:bg-rose-100'}`}
-                title={editMode ? 'Modo edição ativo — clique pra travar' : 'Modo navegação — clique pra desbloquear edição'}>
-                {editMode ? <LockOpen size={16} /> : <Lock size={16} />}
-              </button>
-              <button
                 onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
                 className="w-9 h-9 flex items-center justify-center rounded-lg border bg-white hover:bg-slate-50 text-slate-700 transition shadow-sm"
                 title={theme === 'dark' ? 'Mudar para tema claro' : 'Mudar para tema escuro'}>
                 {theme === 'dark' ? <Sun size={16} /> : <Moon size={16} />}
               </button>
-              {editMode && (
-                <button onClick={handleSaveAs} className="flex items-center gap-2 bg-slate-900 text-white px-3 md:px-4 py-2 rounded-lg text-sm font-medium hover:bg-slate-800 transition shadow">
-                  <Save size={16} /> <span className="hidden sm:inline">Salvar / Baixar</span>
-                </button>
-              )}
+              <button onClick={handleSaveAs} className="flex items-center gap-2 bg-slate-900 text-white px-3 md:px-4 py-2 rounded-lg text-sm font-medium hover:bg-slate-800 transition shadow">
+                <Save size={16} /> <span className="hidden sm:inline">Salvar / Baixar</span>
+              </button>
               <div className="w-9 h-9 bg-slate-200 rounded-full flex items-center justify-center text-slate-800 font-bold border-2 border-white shadow">L</div>
             </div>
           </header>
           <div className="app-content flex-1 overflow-y-auto p-4 md:p-8 pb-20">
             <div className="max-w-7xl mx-auto">
-              {!editMode && (
-                <div className="mb-4 bg-rose-50 border border-rose-200 rounded-lg px-4 py-2.5 flex items-center gap-3 no-print animate-fade-in">
-                  <Lock size={18} className="text-rose-600 shrink-0" />
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium text-rose-900">Modo navegação</p>
-                    <p className="text-xs text-rose-700">Apenas visualização. Clique no cadeado pra desbloquear edição.</p>
-                  </div>
-                  <button onClick={handleToggleLock} className="text-xs bg-rose-600 hover:bg-rose-700 text-white px-3 py-1.5 rounded-lg font-medium shadow-sm shrink-0 flex items-center gap-1">
-                    <LockOpen size={12} /> Desbloquear
-                  </button>
-                </div>
-              )}
               {activeTab === 'dashboard' && renderDashboard()}
               {activeTab === 'availability' && renderAvailability()}
               {activeTab === 'schedule' && renderSchedule()}
@@ -1641,46 +1545,6 @@ ${sTagClose}
             </button>
           </footer>
         </main>
-
-        {/* MODAL: Senha de Acesso */}
-        {showPasswordModal && (
-          <div className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4 no-print">
-            <form onSubmit={handleSubmitPassword} className="bg-white p-6 rounded-xl w-full max-w-sm shadow-2xl space-y-4 animate-fade-in">
-              <div className="flex items-center gap-3">
-                <div className="w-12 h-12 bg-amber-100 text-amber-600 rounded-xl flex items-center justify-center">
-                  <Lock size={22} />
-                </div>
-                <div>
-                  <h3 className="font-bold text-lg">Liberar Edição</h3>
-                  <p className="text-xs text-slate-500">Digite a senha para destravar</p>
-                </div>
-              </div>
-              <div>
-                <input
-                  type="password"
-                  autoFocus
-                  value={passwordInput}
-                  onChange={e => { setPasswordInput(e.target.value); setPasswordError(false); }}
-                  placeholder="Senha"
-                  className={`w-full border p-3 rounded-lg text-sm transition ${passwordError ? 'border-rose-500 ring-2 ring-rose-200' : 'border-slate-300 focus:border-indigo-500'}`}
-                />
-                {passwordError && (
-                  <p className="text-xs text-rose-600 mt-1.5 flex items-center gap-1">
-                    <AlertTriangle size={12} /> Senha incorreta
-                  </p>
-                )}
-              </div>
-              <div className="flex gap-3 pt-1">
-                <button type="submit" className="flex-1 bg-emerald-600 text-white py-2.5 rounded-lg font-medium shadow hover:bg-emerald-700 flex items-center justify-center gap-2">
-                  <LockOpen size={16} /> Desbloquear
-                </button>
-                <button type="button" onClick={() => { setShowPasswordModal(false); setPasswordInput(''); setPasswordError(false); }} className="flex-1 bg-slate-100 text-slate-600 py-2.5 rounded-lg font-medium">
-                  Cancelar
-                </button>
-              </div>
-            </form>
-          </div>
-        )}
 
         {/* MODAL: Adicionar Evento */}
         {showAddEventModal && (
