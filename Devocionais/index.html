@@ -665,6 +665,46 @@ main{
 </div>
 
 <script>
+/* ============================================================
+   CONFIG — SYNC COM GOOGLE DOCS
+   ============================================================
+   Cole aqui os 2 valores que você obtém ao implantar o Apps Script:
+     • APPS_SCRIPT_URL → URL do Web App (termina em /exec)
+     • SYNC_TOKEN      → a mesma frase secreta que você pôs em SHARED_TOKEN
+   Se APPS_SCRIPT_URL ficar vazio, a sync fica desligada e o app
+   continua funcionando normalmente, só salvando no navegador.
+   ============================================================ */
+const APPS_SCRIPT_URL = '';
+const SYNC_TOKEN      = 'TROCAR_POR_FRASE_LONGA_SECRETA_SUA_AQUI';
+
+const SYNC_ENABLED = !!APPS_SCRIPT_URL && /^https?:\/\//.test(APPS_SCRIPT_URL);
+
+/* ------------------------------------------------------------
+   SHIM DE STORAGE
+   Quando o app rodar fora do Claude (GitHub Pages, Netlify, local),
+   window.storage não existe → cai pra localStorage. A API original
+   é assíncrona, então envelopamos pra manter o resto do código
+   inalterado.
+   ------------------------------------------------------------ */
+if (!window.storage) {
+  window.storage = {
+    async get(key)        { const v = localStorage.getItem(key);
+                            return v === null ? null : { key, value: v }; },
+    async set(key, value) { localStorage.setItem(key, value);
+                            return { key, value }; },
+    async delete(key)     { localStorage.removeItem(key);
+                            return { key, deleted: true }; },
+    async list(prefix) {
+      const keys = [];
+      for (let i = 0; i < localStorage.length; i++) {
+        const k = localStorage.key(i);
+        if (!prefix || k.startsWith(prefix)) keys.push(k);
+      }
+      return { keys, prefix };
+    }
+  };
+}
+
 const STORAGE_KEY = 'sermon:current';
 const THEME_KEY = 'sermon:theme';
 
@@ -872,11 +912,79 @@ async function save(){
     }
     await window.storage.set(STORAGE_KEY, json);
     setStatus('saved');
+    scheduleSyncToDocs();
   }catch(err){
     setStatus('error');
     showToast('Não consegui salvar agora. Tente de novo em instantes.');
   }
 }
+
+// ─── SYNC COM GOOGLE DOCS ────────────────────────────────────
+// Estratégia: depois de cada save local bem-sucedido, agendamos
+// um POST pro Apps Script (debounce de 3s pra não fritar a API
+// enquanto o usuário digita rápido). Se já houver um sync em voo,
+// enfileiramos um único "próximo" — assim coalescemos rajadas.
+let docSyncTimer    = null;
+let docSyncInFlight = false;
+let docSyncQueued   = false;
+let docSyncState    = 'idle';   // idle | pending | syncing | ok | error
+
+function setDocSyncStatus(s, detail){
+  docSyncState = s;
+  const local = statusEl.classList.contains('error') ? 'Erro ao salvar'
+              : statusEl.classList.contains('saving') ? 'Salvando…'
+              : 'Salvo';
+  const labels = {
+    idle:    'Doc: aguardando primeira alteração',
+    pending: 'Doc: sincronização agendada…',
+    syncing: 'Doc: sincronizando agora…',
+    ok:      'Doc: sincronizado' + (detail ? ' às ' + detail : ''),
+    error:   'Doc: erro — ' + (detail || 'falha desconhecida')
+  };
+  // Sem mudar o visual da bolinha, enriquecemos o tooltip do status.
+  statusEl.title = local + ' • ' + (labels[s] || s);
+}
+
+function scheduleSyncToDocs(){
+  if(!SYNC_ENABLED) return;
+  setDocSyncStatus('pending');
+  clearTimeout(docSyncTimer);
+  docSyncTimer = setTimeout(syncToDocs, 3000);
+}
+
+async function syncToDocs(){
+  if(!SYNC_ENABLED) return;
+  if(docSyncInFlight){ docSyncQueued = true; return; }
+  docSyncInFlight = true;
+  setDocSyncStatus('syncing');
+  try{
+    // IMPORTANTE: não setar Content-Type. O fetch usa text/plain por
+    // padrão pra body string, que é um "simple CORS request" e NÃO
+    // dispara preflight OPTIONS. Apps Script Web Apps não respondem
+    // bem ao preflight, então essa é a forma estável de chamar.
+    const res = await fetch(APPS_SCRIPT_URL, {
+      method: 'POST',
+      body: JSON.stringify({ token: SYNC_TOKEN, state })
+    });
+    if(!res.ok) throw new Error('HTTP ' + res.status);
+    const data = await res.json();
+    if(!data || !data.ok) throw new Error((data && data.error) || 'resposta sem ok');
+    setDocSyncStatus('ok', new Date().toLocaleTimeString('pt-BR'));
+  } catch(err){
+    console.error('[doc-sync]', err);
+    setDocSyncStatus('error', String(err.message || err));
+    showToast('Erro ao sincronizar com Google Docs (ver console).');
+  } finally {
+    docSyncInFlight = false;
+    if(docSyncQueued){
+      docSyncQueued = false;
+      setTimeout(syncToDocs, 800);
+    }
+  }
+}
+
+// Util pra debug: digite syncNow() no console pra forçar sync.
+window.syncNow = syncToDocs;
 
 // ─── SELECTION TRACKING ──────────────────────────────────────
 let lastRange = null;
@@ -1269,6 +1377,16 @@ ${pointsHtml}
   await loadTheme();
   await load();
   bindAllEditors();
+
+  // Anuncia o estado de sync com Docs no console e no tooltip do status.
+  if(SYNC_ENABLED){
+    setDocSyncStatus('idle');
+    console.log('%c[Estudo] Sync com Google Docs ATIVO', 'color:#5fa05f;font-weight:bold');
+  } else {
+    statusEl.title = 'Salvo • Sync com Docs DESLIGADO — preencha APPS_SCRIPT_URL no topo do arquivo.';
+    console.log('%c[Estudo] Sync com Docs DESLIGADO — preencha APPS_SCRIPT_URL e SYNC_TOKEN no topo do <script>', 'color:#c89a3a;font-weight:bold');
+  }
+
   // garante que execCommand use estilos CSS inline (e não <font>)
   document.execCommand('styleWithCSS', false, true);
 
