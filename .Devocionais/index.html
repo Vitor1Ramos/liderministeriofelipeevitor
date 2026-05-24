@@ -1,0 +1,1293 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Estudo · Preparação de Pregação</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Lora:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ─── THEME TOKENS ─────────────────────────────────────────── */
+:root[data-theme="dark"]{
+  --bg:#1f1d1c;
+  --bg-grad-a:rgba(212,182,118,.04);
+  --bg-grad-b:rgba(214,138,138,.04);
+  --paper:#2a2825;
+  --paper-edge:#2f2d2a;
+  --paper-elev:#36332f;
+  --ink:#ede4d2;
+  --ink-soft:#a89c8a;
+  --ink-muted:#6e6558;
+  --accent:#d68a8a;
+  --accent-dark:#b56c6c;
+  --gold:#d4b676;
+  --gold-soft:#a8823b;
+  --border:#3a3734;
+  --border-soft:#2c2a27;
+  --shadow:0 1px 2px rgba(0,0,0,.4),0 12px 28px -10px rgba(0,0,0,.55);
+  --notes-tint:rgba(212,182,118,.04);
+  --hl-yellow-sw:#f6e689;
+  --hl-green-sw:#c8e0a0;
+  --hl-pink-sw:#f3bccf;
+  --hl-blue-sw:#b9d2ec;
+}
+:root[data-theme="light"]{
+  --bg:#efe7d4;
+  --bg-grad-a:rgba(168,130,59,.07);
+  --bg-grad-b:rgba(122,46,46,.05);
+  --paper:#faf6ec;
+  --paper-edge:#f1e9d2;
+  --paper-elev:#fffbf2;
+  --ink:#1f1a14;
+  --ink-soft:#6a5e4d;
+  --ink-muted:#9a8e7a;
+  --accent:#7a2e2e;
+  --accent-dark:#5a1f1f;
+  --gold:#a8823b;
+  --gold-soft:#d4b676;
+  --border:#d6c9a8;
+  --border-soft:#e5dcc1;
+  --shadow:0 1px 2px rgba(0,0,0,.04),0 8px 24px -12px rgba(60,40,20,.18);
+  --notes-tint:rgba(168,130,59,.06);
+  --hl-yellow-sw:#f6e689;
+  --hl-green-sw:#c8e0a0;
+  --hl-pink-sw:#f3bccf;
+  --hl-blue-sw:#b9d2ec;
+}
+
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{
+  font-family:'Outfit',system-ui,sans-serif;
+  background:var(--bg);
+  background-image:
+    radial-gradient(circle at 20% 10%,var(--bg-grad-a),transparent 40%),
+    radial-gradient(circle at 80% 90%,var(--bg-grad-b),transparent 40%);
+  color:var(--ink);
+  display:flex;flex-direction:column;
+  min-height:100vh;
+  font-size:15px;line-height:1.5;
+  padding-top:var(--header-h, 65px);  /* compensa o header fixed dinamicamente */
+  transition:background-color .3s,color .3s;
+}
+
+/* ─── HEADER ───────────────────────────────────────────────── */
+header{
+  position:fixed;top:0;left:0;right:0;z-index:100;
+  background:var(--bg);
+  border-bottom:1px solid var(--border);
+  padding:14px 24px;
+  display:flex;align-items:center;gap:16px;
+  flex-wrap:wrap;
+}
+.brand{display:flex;align-items:baseline;gap:10px;font-family:'Cormorant Garamond',serif}
+.brand .mark{font-size:28px;font-weight:600;color:var(--accent);letter-spacing:-.5px}
+.brand .sub{font-family:'Outfit',sans-serif;font-size:11px;text-transform:uppercase;letter-spacing:2px;color:var(--ink-muted)}
+
+.toolbar{
+  display:flex;align-items:center;gap:4px;
+  background:var(--paper);
+  border:1px solid var(--border);
+  border-radius:10px;
+  padding:5px;
+  box-shadow:var(--shadow);
+}
+.tool-group{display:flex;gap:3px;align-items:center}
+.tool-divider{width:1px;height:22px;background:var(--border);margin:0 4px}
+.tool-btn{
+  width:32px;height:32px;
+  border:none;background:transparent;
+  border-radius:6px;cursor:pointer;
+  display:inline-flex;align-items:center;justify-content:center;
+  color:var(--ink);
+  font-family:'Lora',serif;font-size:15px;
+  transition:background .15s;
+}
+.tool-btn:hover{background:var(--paper-edge)}
+.tool-btn:active{background:var(--border-soft)}
+.tool-btn.bold{font-weight:700}
+.tool-btn.italic{font-style:italic;font-weight:500}
+.tool-btn.underline{text-decoration:underline;text-underline-offset:2px}
+
+.hl-swatch{
+  width:22px;height:22px;border-radius:50%;
+  border:2px solid rgba(0,0,0,.08);
+  cursor:pointer;transition:transform .15s;
+}
+.hl-swatch:hover{transform:scale(1.12)}
+.hl-yellow{background:var(--hl-yellow-sw)}
+.hl-green{background:var(--hl-green-sw)}
+.hl-pink{background:var(--hl-pink-sw)}
+.hl-blue{background:var(--hl-blue-sw)}
+.hl-clear{background:var(--paper-elev);position:relative}
+.hl-clear::after{content:"";position:absolute;inset:5px;background:linear-gradient(45deg,transparent 45%,var(--accent) 45%,var(--accent) 55%,transparent 55%);border-radius:50%}
+
+/* font color swatches — "A" + colored bar */
+.fc-swatch{
+  width:26px;height:30px;
+  background:transparent;border:none;
+  border-radius:5px;cursor:pointer;
+  display:inline-flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  padding:3px 0;
+  transition:background .15s;
+  position:relative;
+}
+.fc-swatch:hover{background:var(--paper-edge)}
+.fc-letter{
+  font-family:'Lora',serif;font-size:14px;font-weight:600;
+  line-height:1;color:var(--ink);
+}
+.fc-bar{width:14px;height:3px;border-radius:1px;margin-top:3px}
+.fc-default .fc-bar{
+  background:transparent;
+  border:1px dashed var(--ink-muted);
+  height:0;margin-top:4px;
+}
+.fc-default .fc-letter{color:var(--ink-soft)}
+
+.spacer{flex:1}
+.status{font-size:12px;color:var(--ink-muted);font-variant-numeric:tabular-nums;display:flex;align-items:center;gap:6px;cursor:default}
+.status .label{display:none}
+.status .dot{width:9px;height:9px;border-radius:50%;background:#5fa05f;box-shadow:0 0 8px rgba(95,160,95,.55);transition:background .2s,box-shadow .2s}
+.status.saving .dot{background:var(--gold);box-shadow:0 0 8px rgba(168,130,59,.55)}
+.status.error .dot{background:#c25555;box-shadow:0 0 8px rgba(194,85,85,.6)}
+.action-btn{
+  font-family:'Outfit',sans-serif;font-size:12px;letter-spacing:.5px;text-transform:uppercase;
+  background:transparent;border:1px solid var(--border);color:var(--ink-soft);
+  padding:8px 14px;border-radius:8px;cursor:pointer;transition:all .15s;
+}
+.action-btn:hover{background:var(--paper);border-color:var(--accent);color:var(--accent)}
+.theme-toggle{
+  width:36px;height:36px;border:1px solid var(--border);
+  background:var(--paper);border-radius:50%;cursor:pointer;
+  display:inline-flex;align-items:center;justify-content:center;
+  color:var(--gold);transition:all .2s;
+}
+.theme-toggle:hover{border-color:var(--gold);transform:rotate(20deg)}
+.theme-toggle svg{width:16px;height:16px}
+.theme-toggle .icon-sun,.theme-toggle .icon-moon{display:none}
+:root[data-theme="dark"] .theme-toggle .icon-sun{display:block}
+:root[data-theme="light"] .theme-toggle .icon-moon{display:block}
+
+.icon-btn{
+  width:36px;height:36px;border:1px solid var(--border);
+  background:var(--paper);border-radius:50%;cursor:pointer;
+  display:inline-flex;align-items:center;justify-content:center;
+  color:var(--ink-soft);transition:all .2s;
+}
+.icon-btn:hover{border-color:var(--accent);color:var(--accent)}
+.icon-btn svg{width:16px;height:16px}
+
+/* ─── LAYOUT 2 COLUNAS ─────────────────────────────────────── */
+main{
+  flex:1;display:grid;
+  grid-template-columns:340px 1fr;
+  gap:0;align-items:stretch;min-height:0;
+  position:relative;
+  z-index:1;             /* fica abaixo do header (z:100) — impede que
+                            sidebars sticky subam por cima da toolbar */
+}
+
+/* ─── COLUNA LATERAL ESQUERDA (dois cards separados) ───────── */
+/* O .left-column é o grid item — fica tão alto quanto o editor.
+   Dentro dele:
+   - .bible-section: bloco normal no topo, rola junto com a página
+   - .notes-section: sticky, gruda no topo depois que a bíblia
+     rola pra fora, e permanece visível até o fim do editor
+     (= conclusão), porque sticky para de funcionar quando o
+     containing block (.left-column) acaba. */
+.left-column{display:flex;flex-direction:column}
+.bible-section{
+  background:var(--paper);
+  border-right:1px solid var(--border);
+  border-bottom:1px solid var(--border);
+  padding:32px 26px 30px;
+  transition:background-color .3s,border-color .3s;
+}
+.notes-section{
+  background:var(--paper);
+  border-right:1px solid var(--border);
+  border-top:1px solid var(--border);
+  border-bottom:1px solid var(--border);
+  padding:24px 26px 30px;
+  margin-top:12px;            /* gap visível entre as duas sidebars */
+  position:sticky;
+  top:calc(var(--header-h, 65px) + 12px);  /* gruda abaixo do header com respiro */
+  z-index:10;                 /* abaixo do header (z:100) */
+  max-height:calc(100vh - var(--header-h, 65px) - 24px);
+  overflow-y:auto;
+  transition:background-color .3s,border-color .3s;
+}
+.notes-accent-bar{
+  height:3px;width:40px;background:var(--gold);border-radius:2px;margin-bottom:18px;
+}
+
+/* Textos editáveis sem caixa (no estilo do painel) */
+.ref-eyebrow,.notes-title{
+  font-family:'Outfit',sans-serif !important;
+  font-size:10px !important;letter-spacing:3px;text-transform:uppercase;
+  color:var(--gold) !important;font-weight:500 !important;
+  background:transparent !important;border:none !important;
+  padding:0 !important;margin-bottom:6px;box-shadow:none !important;
+}
+.ref-title,.notes-subtitle{
+  font-family:'Cormorant Garamond',serif !important;
+  font-weight:600 !important;color:var(--ink) !important;
+  letter-spacing:-.3px;line-height:1.15;
+  background:transparent !important;border:none !important;
+  padding:0 !important;box-shadow:none !important;
+}
+.ref-title{font-size:26px !important;margin-bottom:4px}
+.notes-subtitle{font-size:22px !important;margin-bottom:18px}
+.ref-subtitle{
+  font-family:'Lora',serif !important;font-style:italic;
+  color:var(--ink-soft) !important;font-size:14px !important;
+  background:transparent !important;border:none !important;
+  padding:0 !important;margin-bottom:24px;box-shadow:none !important;
+}
+.ref-eyebrow:focus,.ref-title:focus,.ref-subtitle:focus,.ref-body:focus,
+.notes-title:focus,.notes-subtitle:focus,.notes-body:focus{
+  outline:1px dashed var(--gold);outline-offset:6px;box-shadow:none !important;
+}
+.ornament{display:flex;align-items:center;gap:10px;margin:18px 0 22px;color:var(--gold)}
+.ornament::before,.ornament::after{content:"";flex:1;height:1px;background:var(--border)}
+.ornament span{font-size:14px}
+.ref-body{
+  font-family:'Lora',serif !important;
+  font-size:15px !important;line-height:1.75;color:var(--ink) !important;
+  background:transparent !important;border:none !important;
+  padding:0 !important;
+  min-height:160px;
+  max-height:400px;          /* mostra ~8 versículos por vez */
+  overflow-y:auto;
+  scrollbar-width:thin;
+  scrollbar-color:var(--border) transparent;
+  box-shadow:none !important;
+}
+.ref-body::-webkit-scrollbar{width:6px}
+.ref-body::-webkit-scrollbar-track{background:transparent}
+.ref-body::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
+.ref-body::-webkit-scrollbar-thumb:hover{background:var(--ink-muted)}
+.ref-body .v{display:block;margin-bottom:10px;padding-left:28px;text-indent:-28px}
+.ref-body .num{
+  font-family:'Cormorant Garamond',serif;font-weight:600;color:var(--accent);
+  font-size:13px;display:inline-block;width:22px;text-align:right;margin-right:6px;
+  vertical-align:baseline;position:relative;top:-1px;
+}
+.notes-body{
+  font-family:'Lora',serif !important;
+  font-size:14px !important;line-height:1.7;color:var(--ink) !important;
+  background:transparent !important;border:none !important;
+  padding:0 !important;min-height:240px;box-shadow:none !important;
+}
+.notes-body h4{
+  font-family:'Outfit',sans-serif;
+  font-size:10px;font-weight:600;letter-spacing:2.5px;text-transform:uppercase;
+  color:var(--accent);margin:16px 0 6px;
+}
+.notes-body h4:first-child{margin-top:0}
+.notes-body ul{padding-left:18px;margin-bottom:10px}
+.notes-body li{margin-bottom:5px}
+.notes-body p{margin-bottom:10px}
+.panel-note{
+  margin-top:18px;padding-top:14px;border-top:1px solid var(--border-soft);
+  font-size:11px;color:var(--ink-muted);font-style:italic;text-align:center;
+}
+
+/* ─── EDITOR (direita) ─────────────────────────────────────── */
+.editor-wrap{position:relative;overflow:visible}
+.editor{
+  position:relative;
+  padding:48px 56px 120px;
+  max-width:820px;width:100%;margin:0 auto;
+}
+
+.field{margin-bottom:32px;position:relative}
+.field-label{
+  display:flex;align-items:center;gap:10px;
+  font-size:11px;font-weight:500;letter-spacing:2.5px;text-transform:uppercase;
+  color:var(--gold);margin-bottom:10px;
+}
+.field-label .num-badge{
+  display:inline-flex;align-items:center;justify-content:center;
+  width:22px;height:22px;border-radius:50%;
+  background:var(--accent);color:#fff;
+  font-family:'Cormorant Garamond',serif;font-size:13px;font-weight:600;
+  letter-spacing:0;text-transform:none;
+}
+.field-label .label-text{flex:0 0 auto}
+.point-actions{margin-left:auto;display:flex;gap:4px;opacity:0;transition:opacity .2s}
+.point-field:hover .point-actions,.point-actions:focus-within{opacity:1}
+.point-action{
+  width:22px;height:22px;border:1px solid var(--border);background:var(--paper);
+  border-radius:50%;cursor:pointer;color:var(--ink-soft);
+  font-size:14px;line-height:1;display:inline-flex;align-items:center;justify-content:center;
+  transition:all .15s;font-family:'Outfit',sans-serif;padding:0;
+}
+.point-action:hover{border-color:var(--accent);color:var(--accent);background:var(--paper-elev)}
+.point-action.remove:hover{border-color:#c25555;color:#c25555}
+
+[contenteditable]{
+  outline:none;
+  background:var(--paper);
+  border:1px solid var(--border-soft);
+  border-radius:10px;
+  padding:16px 22px;
+  transition:border-color .2s,box-shadow .2s,background-color .3s;
+  font-family:'Lora',serif;
+  font-size:16px;line-height:1.7;color:var(--ink);
+  box-shadow:0 1px 2px rgba(0,0,0,.02);
+  cursor:text;
+}
+[contenteditable]:focus{
+  border-color:var(--accent);
+  box-shadow:0 0 0 3px color-mix(in srgb, var(--accent) 15%, transparent);
+}
+[contenteditable]:empty::before{content:attr(data-placeholder);color:var(--ink-muted);font-style:italic;opacity:.7}
+[contenteditable] p{margin-bottom:.8em}
+[contenteditable] p:last-child{margin-bottom:0}
+
+.title-input{
+  font-family:'Cormorant Garamond',serif !important;
+  font-size:42px !important;font-weight:600;line-height:1.05;letter-spacing:-1px;
+  color:var(--ink);padding:14px 22px !important;
+}
+.basetext-input{font-style:italic;font-size:15px !important;color:var(--ink-soft)}
+.point-title{
+  font-family:'Cormorant Garamond',serif !important;
+  font-size:22px !important;font-weight:600;color:var(--accent);
+  line-height:1.2;margin-bottom:10px;padding:11px 22px !important;
+}
+.body-input{min-height:90px}
+
+.section-divider{
+  display:flex;align-items:center;gap:14px;margin:44px 0 32px;color:var(--gold-soft);
+}
+.section-divider::before,.section-divider::after{
+  content:"";flex:1;height:1px;
+  background:linear-gradient(90deg,transparent,var(--border),transparent);
+}
+.section-divider span{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:18px;color:var(--gold)}
+
+.add-point-row{display:flex;justify-content:center;margin:8px 0 4px}
+.add-point-btn{
+  font-family:'Outfit',sans-serif;font-size:11px;letter-spacing:2px;text-transform:uppercase;
+  color:var(--gold);background:transparent;border:1px dashed var(--border);
+  padding:10px 22px;border-radius:24px;cursor:pointer;transition:all .2s;
+}
+.add-point-btn:hover{border-color:var(--gold);border-style:solid;background:var(--paper)}
+
+/* ─── HIDDEN FILE INPUT ────────────────────────────────────── */
+.file-input{display:none}
+
+/* ─── IMAGENS FLUTUANTES ───────────────────────────────────── */
+.image-layer{position:absolute;top:0;left:0;right:0;bottom:0;pointer-events:none;z-index:5}
+.floating-image{
+  position:absolute;pointer-events:auto;cursor:move;
+  border-radius:6px;box-shadow:0 4px 16px rgba(0,0,0,.25);
+  user-select:none;-webkit-user-select:none;touch-action:none;
+}
+.floating-image img{display:block;width:100%;height:auto;border-radius:6px;pointer-events:none}
+.floating-image::before{
+  content:"";position:absolute;inset:-2px;
+  border:2px solid transparent;border-radius:8px;
+  transition:border-color .15s;pointer-events:none;
+}
+.floating-image:hover::before{border-color:color-mix(in srgb, var(--accent) 60%, transparent)}
+.floating-image.selected::before{border-color:var(--accent)}
+.fi-controls{position:absolute;top:8px;right:8px;display:none;gap:4px;z-index:3}
+.floating-image.selected .fi-controls{display:flex}
+.fi-btn{
+  width:28px;height:28px;border-radius:50%;
+  background:rgba(0,0,0,.7);
+  border:1.5px solid rgba(255,255,255,.45);
+  color:#fff;cursor:pointer;
+  display:inline-flex;align-items:center;justify-content:center;
+  box-shadow:0 2px 10px rgba(0,0,0,.5);
+  font-size:18px;font-weight:600;line-height:1;
+  padding:0;
+  backdrop-filter:blur(4px);
+  -webkit-backdrop-filter:blur(4px);
+  transition:all .15s;
+}
+.fi-btn:hover{transform:scale(1.08)}
+.fi-btn.delete:hover{background:#c25555;border-color:#fff;color:#fff}
+.fi-handle{
+  position:absolute;width:14px;height:14px;
+  background:var(--paper-elev);border:2px solid var(--accent);
+  border-radius:50%;display:none;z-index:2;
+  box-shadow:0 2px 6px rgba(0,0,0,.2);
+}
+.floating-image.selected .fi-handle{display:block}
+.fi-handle.nw{top:-7px;left:-7px;cursor:nwse-resize}
+.fi-handle.ne{top:-7px;right:-7px;cursor:nesw-resize}
+.fi-handle.sw{bottom:-7px;left:-7px;cursor:nesw-resize}
+.fi-handle.se{bottom:-7px;right:-7px;cursor:nwse-resize}
+
+/* ─── TOAST (sutil) ────────────────────────────────────────── */
+.toast{
+  position:fixed;bottom:18px;right:18px;
+  background:color-mix(in srgb, var(--ink) 85%, transparent);
+  color:var(--paper);
+  padding:8px 14px;border-radius:8px;
+  font-size:11.5px;letter-spacing:.2px;
+  box-shadow:0 6px 18px rgba(0,0,0,.18);
+  backdrop-filter:blur(8px);
+  -webkit-backdrop-filter:blur(8px);
+  opacity:0;transform:translateY(6px);
+  transition:opacity .35s,transform .35s;
+  pointer-events:none;z-index:200;max-width:280px;
+}
+.toast.show{opacity:.82;transform:translateY(0)}
+
+/* ─── MODAL ────────────────────────────────────────────────── */
+.modal-backdrop{
+  position:fixed;inset:0;background:rgba(0,0,0,.55);
+  display:none;align-items:center;justify-content:center;z-index:300;
+}
+.modal-backdrop.show{display:flex}
+.modal{
+  background:var(--paper-elev);border:1px solid var(--border);
+  border-radius:14px;padding:28px;max-width:380px;width:90%;
+  box-shadow:0 24px 60px rgba(0,0,0,.5);
+}
+.modal h3{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:600;color:var(--ink);margin-bottom:10px}
+.modal p{color:var(--ink-soft);font-size:14px;margin-bottom:20px;line-height:1.5}
+.modal-actions{display:flex;gap:10px;justify-content:flex-end}
+
+/* ─── RESPONSIVE ───────────────────────────────────────────── */
+/* Janela apertando: o menu lateral encolhe mas NUNCA some — só
+   o editor central vai reduzindo padding e fontes. Empilhamento
+   vertical fica reservado pra telas realmente pequenas (mobile). */
+@media (max-width:1180px){
+  main{grid-template-columns:300px 1fr}
+  .editor{padding:42px 40px 100px}
+  .bible-section{padding:28px 22px 26px}
+  .notes-section{padding:22px 22px 32px}
+}
+@media (max-width:980px){
+  main{grid-template-columns:260px 1fr}
+  .editor{padding:36px 30px 90px}
+  .title-input{font-size:36px !important}
+  .bible-section{padding:24px 18px 22px}
+  .notes-section{padding:20px 18px 28px}
+  .ref-title{font-size:22px !important}
+  .notes-subtitle{font-size:20px !important}
+}
+@media (max-width:820px){
+  main{grid-template-columns:240px 1fr}
+  .editor{padding:30px 22px 80px}
+  .title-input{font-size:32px !important}
+  .point-title{font-size:20px !important}
+  .ref-body{font-size:14px !important}
+  .notes-body{font-size:13px !important}
+}
+
+/* Mobile real (celular em portrait): aí sim, empilha. */
+@media (max-width:640px){
+  main{grid-template-columns:1fr}
+  .left-column{order:2}
+  .editor-wrap{order:1}
+  .bible-section,.notes-section{
+    border-right:none;
+  }
+  .notes-section{
+    position:static;
+    max-height:none;
+    overflow-y:visible;
+    margin-top:0;
+    border-top:none;
+  }
+  .editor{padding:24px 16px 60px}
+  .title-input{font-size:28px !important}
+  header{padding:10px 12px}
+  .toolbar{order:99;width:100%;overflow-x:auto}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="brand">
+    <span class="mark">Estudo</span>
+    <span class="sub">Preparação de Pregação</span>
+  </div>
+
+  <div class="toolbar" role="toolbar" aria-label="Ferramentas de formatação">
+
+    <div class="tool-group" title="Marca-texto">
+      <span class="hl-swatch hl-yellow" data-color="#f6e689" title="Marcar — amarelo"></span>
+      <span class="hl-swatch hl-green" data-color="#c8e0a0" title="Marcar — verde"></span>
+      <span class="hl-swatch hl-pink" data-color="#f3bccf" title="Marcar — rosa"></span>
+      <span class="hl-swatch hl-blue" data-color="#b9d2ec" title="Marcar — azul"></span>
+      <span class="hl-swatch hl-clear" data-color="transparent" title="Remover marca"></span>
+    </div>
+
+    <div class="tool-divider"></div>
+
+    <div class="tool-group" title="Cor da fonte — clique de novo na mesma cor para tirar">
+      <button class="fc-swatch" data-color="#c84545" title="Vermelho (toggle)">
+        <span class="fc-letter">A</span><span class="fc-bar" style="background:#c84545"></span>
+      </button>
+      <button class="fc-swatch" data-color="#4a82c8" title="Azul (toggle)">
+        <span class="fc-letter">A</span><span class="fc-bar" style="background:#4a82c8"></span>
+      </button>
+      <button class="fc-swatch" data-color="#4a9466" title="Verde (toggle)">
+        <span class="fc-letter">A</span><span class="fc-bar" style="background:#4a9466"></span>
+      </button>
+      <button class="fc-swatch" data-color="#c89a3a" title="Âmbar (toggle)">
+        <span class="fc-letter">A</span><span class="fc-bar" style="background:#c89a3a"></span>
+      </button>
+      <button class="fc-swatch fc-default" data-color="default" title="Voltar para a cor padrão">
+        <span class="fc-letter">A</span><span class="fc-bar"></span>
+      </button>
+    </div>
+
+    <div class="tool-divider"></div>
+
+    <div class="tool-group">
+      <button class="tool-btn bold" data-cmd="bold" title="Negrito (Ctrl+B)">B</button>
+      <button class="tool-btn italic" data-cmd="italic" title="Itálico (Ctrl+I)">I</button>
+      <button class="tool-btn underline" data-cmd="underline" title="Sublinhado">U</button>
+    </div>
+
+    <div class="tool-divider"></div>
+
+    <div class="tool-group">
+      <button class="tool-btn" id="btn-image" title="Inserir imagem flutuante">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+      </button>
+      <input type="file" class="file-input" id="img-input" accept="image/*">
+    </div>
+
+  </div>
+
+  <div class="spacer"></div>
+
+  <div class="status" id="status">
+    <span class="dot"></span><span class="label">Salvo</span>
+  </div>
+
+  <button class="theme-toggle" id="btn-theme" title="Alternar tema claro/escuro">
+    <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+    <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+  </button>
+
+  <button class="icon-btn" id="btn-export" title="Exportar — baixar como HTML">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+  </button>
+</header>
+
+<main>
+
+  <div class="left-column">
+
+    <section class="bible-section">
+      <div contenteditable="true" class="ref-eyebrow" data-key="refEyebrow" data-placeholder="Texto Base">Texto Base</div>
+      <div contenteditable="true" class="ref-title" data-key="refTitle" data-placeholder="Referência">Efésios 6</div>
+      <div contenteditable="true" class="ref-subtitle" data-key="refSubtitle" data-placeholder="versão · tradução">vv. 10 – 20 · Almeida Revista e Atualizada</div>
+
+      <div class="ornament"><span>✦</span></div>
+
+      <div contenteditable="true" class="ref-body" data-key="refBody" data-placeholder="Cole o texto bíblico aqui — ou substitua por anotações temáticas."><span class="v"><span class="num">10</span>Quanto ao mais, sede fortalecidos no Senhor e na força do seu poder.</span><span class="v"><span class="num">11</span>Revesti-vos de toda a armadura de Deus, para poderdes ficar firmes contra as ciladas do diabo;</span><span class="v"><span class="num">12</span>porque a nossa luta não é contra o sangue e a carne, e sim contra os principados e potestades, contra os dominadores deste mundo tenebroso, contra as forças espirituais do mal, nas regiões celestes.</span><span class="v"><span class="num">13</span>Portanto, tomai toda a armadura de Deus, para que possais resistir no dia mau e, depois de terdes vencido tudo, permanecer inabaláveis.</span><span class="v"><span class="num">14</span>Estai, pois, firmes, cingindo-vos com a verdade e vestindo-vos da couraça da justiça.</span><span class="v"><span class="num">15</span>Calçai os pés com a preparação do evangelho da paz;</span><span class="v"><span class="num">16</span>embraçando sempre o escudo da fé, com o qual podereis apagar todos os dardos inflamados do Maligno.</span><span class="v"><span class="num">17</span>Tomai também o capacete da salvação e a espada do Espírito, que é a palavra de Deus;</span><span class="v"><span class="num">18</span>com toda oração e súplica, orando em todo tempo no Espírito e para isto vigiando com toda perseverança e súplica por todos os santos</span><span class="v"><span class="num">19</span>e também por mim; para que me seja dada, no abrir da minha boca, a palavra, para, com intrepidez, fazer conhecido o mistério do evangelho,</span><span class="v"><span class="num">20</span>pelo qual sou embaixador em cadeias, para que, em Cristo, eu seja ousado em o anunciar, como me cumpre falar.</span></div>
+    </section>
+
+    <section class="notes-section">
+      <div class="notes-accent-bar"></div>
+      <div contenteditable="true" class="notes-title" data-key="notesTitle" data-placeholder="Notas">Notas &amp; Destaques</div>
+      <div contenteditable="true" class="notes-subtitle" data-key="notesSubtitle" data-placeholder="Subtítulo">Lembretes, citações, ilustrações</div>
+
+      <div contenteditable="true" class="notes-body" data-key="notesBody" data-placeholder="Anote aqui os pontos para chamar atenção, citações que vai usar, ilustrações e lembretes pessoais."><h4>Atenção</h4><ul><li>"Sede fortalecidos NO SENHOR" — a força nunca foi nossa.</li><li>A armadura é completa: nenhuma peça opcional.</li><li>Paulo escreveu isso acorrentado.</li></ul><h4>Ilustrações</h4><ul><li>O soldado romano carregava cerca de 30 kg de equipamento.</li><li>Sem o cinturão, nada permanece no lugar — por isso a verdade vem primeiro.</li></ul><h4>Citações</h4><p>[Adicionar quotes a usar]</p><h4>Não esquecer</h4><ul><li>Enfatizar oração no final (v.18).</li><li>Pausa dramática após "ciladas".</li><li>Aplicação: o que vou fazer amanhã de manhã?</li></ul></div>
+
+      <div class="panel-note">Selecione um trecho e clique de novo na mesma cor para tirar.</div>
+    </section>
+
+  </div>
+
+  <div class="editor-wrap">
+    <section class="editor" id="editor">
+
+      <div class="image-layer" id="image-layer"></div>
+
+      <div class="field">
+        <div class="field-label">Título</div>
+        <div contenteditable="true" class="title-input" data-key="title" data-placeholder="O título da pregação…">A Armadura de Deus</div>
+      </div>
+
+      <div class="field">
+        <div class="field-label">Texto Base · Referência</div>
+        <div contenteditable="true" class="basetext-input" data-key="baseRef" data-placeholder="Efésios 6:10-20">Efésios 6:10-20 — Almeida Revista e Atualizada</div>
+      </div>
+
+      <div class="field">
+        <div class="field-label">Introdução</div>
+        <div contenteditable="true" class="body-input" data-key="intro" data-placeholder="Abertura, contexto da carta, gancho com o ouvinte…">Paulo escreve aos efésios da prisão em Roma. Antes de encerrar a carta, ele faz uma convocação militar: a vida cristã é uma guerra real, travada num campo invisível, e o crente precisa estar vestido para ela. A armadura não é metáfora decorativa — é instrução para sobrevivência.</div>
+      </div>
+
+      <div class="section-divider"><span>·  pontos  ·</span></div>
+
+      <div id="points-container"></div>
+
+      <div class="add-point-row">
+        <button class="add-point-btn" id="btn-add-point">+ Adicionar ponto</button>
+      </div>
+
+      <div class="section-divider"><span>·  ·  ·</span></div>
+
+      <div class="field">
+        <div class="field-label">Aplicação</div>
+        <div contenteditable="true" class="body-input" data-key="application" data-placeholder="Como isso desce ao chão da vida do ouvinte?">Como vestimos a armadura HOJE? Vivendo na verdade (sem máscaras, sem mentiras de bolso). Buscando justiça prática nas relações. Compartilhando a paz do evangelho onde há conflito. Exercendo a fé nas pequenas decisões da semana. Lembrando da salvação quando o desânimo bater. Tomando a Palavra todas as manhãs. Orando sem parar.</div>
+      </div>
+
+      <div class="field">
+        <div class="field-label">Conclusão</div>
+        <div contenteditable="true" class="body-input" data-key="conclusion" data-placeholder="O remate. O chamado. A palavra final.">Paulo escreveu isso acorrentado, e ainda assim chama o leitor de "embaixador". A vitória nunca dependeu da nossa força — depende de estarmos vestidos da força dEle. "Sede fortalecidos no Senhor e na força do seu poder." A guerra é dEle. A armadura é dEle. A vitória, também. Hoje, vista-se.</div>
+      </div>
+
+    </section>
+  </div>
+
+</main>
+
+<div class="toast" id="toast"></div>
+
+<div class="modal-backdrop" id="modal">
+  <div class="modal">
+    <h3 id="modal-title">Remover ponto?</h3>
+    <p id="modal-body">Esse ponto contém texto. Tem certeza que quer remover?</p>
+    <div class="modal-actions">
+      <button class="action-btn" id="modal-cancel">Cancelar</button>
+      <button class="action-btn" id="modal-confirm" style="background:#c25555;color:#fff;border-color:#c25555">Remover</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const STORAGE_KEY = 'sermon:current';
+const THEME_KEY = 'sermon:theme';
+
+const DEFAULTS = {
+  v: 4,
+  points: [
+    { title: 'A Realidade da Batalha Espiritual (v.10-13)', body: 'Três verdades precedem a armadura: (a) a força não é nossa — "sede fortalecidos NO SENHOR"; (b) há ciladas reais do diabo — não estamos sendo paranoicos; (c) a luta não é "contra carne e sangue", mas contra principados e potestades. Sem reconhecer o campo de batalha correto, o cristão luta contra pessoas e perde a guerra contra forças espirituais. A armadura começa pela percepção.' },
+    { title: 'As Peças Defensivas (v.14-17a)', body: 'Cinco peças formam a defesa: o cinturão da verdade (o que sustenta tudo no lugar), a couraça da justiça (que protege o coração das acusações), as sandálias da preparação do evangelho da paz (firmeza para não escorregar), o escudo da fé (que apaga os dardos inflamados) e o capacete da salvação (que guarda a mente). Defesa não é passividade — é firmeza vestida.' },
+    { title: 'A Ofensiva: Espada e Oração (v.17b-20)', body: 'A única arma ofensiva é a espada do Espírito — a Palavra de Deus. Mas Paulo não para aí. Imediatamente acrescenta: "com toda oração e súplica, orando em todo tempo no Espírito". Palavra sem oração vira teologia seca; oração sem Palavra vira misticismo. Juntas, são o ataque que faz o inimigo recuar.' }
+  ],
+  images: []
+};
+
+const statusEl = document.getElementById('status');
+const statusLabel = statusEl.querySelector('.label');
+const toastEl = document.getElementById('toast');
+const pointsContainer = document.getElementById('points-container');
+const imageLayer = document.getElementById('image-layer');
+const editorEl = document.getElementById('editor');
+
+function showToast(msg, ms=1800){
+  toastEl.textContent = msg;
+  toastEl.classList.add('show');
+  clearTimeout(showToast._t);
+  showToast._t = setTimeout(()=>toastEl.classList.remove('show'), ms);
+}
+function setStatus(state){
+  if(state==='saving'){statusEl.classList.add('saving');statusEl.classList.remove('error');statusLabel.textContent='Salvando…';statusEl.title='Salvando…';}
+  else if(state==='saved'){statusEl.classList.remove('saving');statusEl.classList.remove('error');statusLabel.textContent='Salvo';statusEl.title='Salvo';}
+  else if(state==='error'){statusEl.classList.remove('saving');statusEl.classList.add('error');statusLabel.textContent='Erro ao salvar';statusEl.title='Erro ao salvar';}
+}
+function escapeHtml(s){return String(s).replace(/[&<>"]/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]))}
+function stripHtml(s){const d=document.createElement('div');d.innerHTML=s;return d.innerText}
+function uid(){return 'i'+Math.random().toString(36).slice(2,10)}
+
+// Normaliza qualquer formato de cor pra rgb(R, G, B) usando o parser do browser
+function normalizeColor(c){
+  if(!c) return '';
+  const d = document.createElement('div');
+  d.style.color = '';
+  d.style.color = c;
+  if(!d.style.color) return '';
+  document.body.appendChild(d);
+  const v = getComputedStyle(d).color;
+  document.body.removeChild(d);
+  return v;
+}
+
+// ─── THEME ───────────────────────────────────────────────────
+async function loadTheme(){
+  let theme = 'dark';
+  try{ const r = await window.storage.get(THEME_KEY); if(r && r.value) theme = r.value; }catch(e){}
+  document.documentElement.dataset.theme = theme;
+}
+async function saveTheme(t){
+  document.documentElement.dataset.theme = t;
+  try{ await window.storage.set(THEME_KEY, t); }catch(e){}
+}
+document.getElementById('btn-theme').addEventListener('click', ()=>{
+  const cur = document.documentElement.dataset.theme;
+  saveTheme(cur==='dark' ? 'light' : 'dark');
+});
+
+// ─── RENDER POINTS ───────────────────────────────────────────
+function renderPoints(points){
+  pointsContainer.innerHTML = '';
+  points.forEach((p, i) => {
+    const div = document.createElement('div');
+    div.className = 'field point-field';
+    div.dataset.idx = i;
+    div.innerHTML = `
+      <div class="field-label">
+        <span class="num-badge">${i+1}</span>
+        <span class="label-text">Ponto ${i+1}</span>
+        <div class="point-actions">
+          <button class="point-action add" data-action="add-after" data-idx="${i}" title="Adicionar ponto depois">+</button>
+          <button class="point-action remove" data-action="remove" data-idx="${i}" title="Remover este ponto">×</button>
+        </div>
+      </div>
+      <div contenteditable="true" class="point-title" data-pidx="${i}" data-pkey="title" data-placeholder="Título do ponto…"></div>
+      <div contenteditable="true" class="body-input" data-pidx="${i}" data-pkey="body" data-placeholder="Descorrer este ponto…"></div>
+    `;
+    pointsContainer.appendChild(div);
+    div.querySelector('[data-pkey="title"]').innerHTML = p.title || '';
+    div.querySelector('[data-pkey="body"]').innerHTML = p.body || '';
+  });
+  bindPointActions();
+  bindAllEditors();
+}
+
+function bindPointActions(){
+  pointsContainer.querySelectorAll('[data-action]').forEach(btn=>{
+    btn.addEventListener('click', e=>{
+      const action = btn.dataset.action;
+      const idx = parseInt(btn.dataset.idx, 10);
+      collectStateFromDOM();
+      if(action==='add-after'){
+        state.points.splice(idx+1, 0, { title:'', body:'' });
+        renderPoints(state.points);
+        scheduleSave();
+        setTimeout(()=>{
+          const t = pointsContainer.querySelector(`[data-idx="${idx+1}"] .point-title`);
+          if(t) t.focus();
+        }, 50);
+      } else if(action==='remove'){
+        const p = state.points[idx];
+        const hasContent = stripHtml(p.title||'').trim() || stripHtml(p.body||'').trim();
+        if(hasContent){
+          openConfirm('Remover ponto?', `O Ponto ${idx+1} tem conteúdo. Tem certeza que quer remover?`, ()=>{
+            state.points.splice(idx, 1);
+            if(state.points.length===0) state.points.push({title:'', body:''});
+            renderPoints(state.points);
+            scheduleSave();
+          });
+        } else {
+          state.points.splice(idx, 1);
+          if(state.points.length===0) state.points.push({title:'', body:''});
+          renderPoints(state.points);
+          scheduleSave();
+        }
+      }
+    });
+  });
+}
+
+// ─── EDITOR BINDINGS ─────────────────────────────────────────
+function bindAllEditors(){
+  document.querySelectorAll('[contenteditable="true"]').forEach(el=>{
+    if(el.dataset._bound) return;
+    el.dataset._bound = '1';
+    el.addEventListener('input', scheduleSave);
+    el.addEventListener('blur', save);
+  });
+}
+
+// ─── STATE ───────────────────────────────────────────────────
+let state = JSON.parse(JSON.stringify(DEFAULTS));
+
+function collectStateFromDOM(){
+  document.querySelectorAll('[data-key]').forEach(el=>{ state[el.dataset.key] = el.innerHTML; });
+  const newPoints = [];
+  pointsContainer.querySelectorAll('.point-field').forEach(field=>{
+    const idx = parseInt(field.dataset.idx, 10);
+    const t = field.querySelector('[data-pkey="title"]');
+    const b = field.querySelector('[data-pkey="body"]');
+    newPoints[idx] = { title: t?t.innerHTML:'', body: b?b.innerHTML:'' };
+  });
+  state.points = newPoints.filter(Boolean);
+}
+
+function applyStateToDOM(){
+  document.querySelectorAll('[data-key]').forEach(el=>{
+    const k = el.dataset.key;
+    if(state[k] !== undefined && state[k] !== null) el.innerHTML = state[k];
+  });
+  if(!state.points || state.points.length===0) state.points = JSON.parse(JSON.stringify(DEFAULTS.points));
+  renderPoints(state.points);
+  renderImages();
+}
+
+// ─── LOAD / SAVE ─────────────────────────────────────────────
+async function load(){
+  try{
+    const res = await window.storage.get(STORAGE_KEY);
+    if(res && res.value){
+      const data = JSON.parse(res.value);
+      if(data.p1Title !== undefined || data.p1Body !== undefined){
+        data.points = [
+          { title: data.p1Title||'', body: data.p1Body||'' },
+          { title: data.p2Title||'', body: data.p2Body||'' },
+          { title: data.p3Title||'', body: data.p3Body||'' }
+        ].filter(p => stripHtml(p.title).trim() || stripHtml(p.body).trim());
+        delete data.p1Title; delete data.p1Body;
+        delete data.p2Title; delete data.p2Body;
+        delete data.p3Title; delete data.p3Body;
+      }
+      if(!data.images) data.images = [];
+      data.v = 4;
+      state = { ...DEFAULTS, ...data };
+      applyStateToDOM();
+      setStatus('saved');
+      return;
+    }
+  }catch(err){/* primeira vez */}
+  state = JSON.parse(JSON.stringify(DEFAULTS));
+  renderPoints(state.points);
+  bindAllEditors();
+  setStatus('saved');
+}
+
+let saveTimer=null;
+function scheduleSave(){
+  setStatus('saving');
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(save, 600);
+}
+async function save(){
+  collectStateFromDOM();
+  try{
+    const json = JSON.stringify(state);
+    if(json.length > 4_800_000){
+      setStatus('error');
+      showToast('Conteúdo passou do limite (≈5 MB). Reduza ou remova imagens.');
+      return;
+    }
+    await window.storage.set(STORAGE_KEY, json);
+    setStatus('saved');
+  }catch(err){
+    setStatus('error');
+    showToast('Não consegui salvar agora. Tente de novo em instantes.');
+  }
+}
+
+// ─── SELECTION TRACKING ──────────────────────────────────────
+let lastRange = null;
+document.addEventListener('selectionchange', ()=>{
+  const sel = window.getSelection();
+  if(sel && sel.rangeCount>0){
+    const range = sel.getRangeAt(0);
+    let node = range.commonAncestorContainer;
+    while(node && node.nodeType!==1) node = node.parentNode;
+    if(node && node.closest && node.closest('[contenteditable="true"]')){
+      lastRange = range.cloneRange();
+    }
+  }
+});
+function restoreSelection(){
+  if(!lastRange) return false;
+  try{
+    const sel = window.getSelection();
+    sel.removeAllRanges();
+    sel.addRange(lastRange);
+    return true;
+  }catch(e){return false}
+}
+
+// ─── HIGHLIGHT (marca-texto) ─────────────────────────────────
+// Regra: aplicar qualquer cor de marca-texto também força a fonte
+// para PRETO IMEDIATAMENTE, garantindo legibilidade sobre o destaque
+// tanto no modo escuro quanto no claro. O usuário pode depois
+// sobrescrever com uma das 4 cores de fonte se quiser. Remover o
+// marca-texto também limpa essa cor forçada, voltando ao padrão.
+//
+// IMPORTANTE: NÃO chamar restoreSelection() entre os dois execCommand —
+// o navegador já mantém a seleção nativa após o hiliteColor; restaurar
+// do lastRange (que ficou obsoleto após o wrap) faz o segundo comando
+// falhar para texto comum.
+document.querySelectorAll('.hl-swatch').forEach(s=>{
+  s.addEventListener('mousedown', e=>e.preventDefault());
+  s.addEventListener('click', ()=>{
+    if(!restoreSelection()){ showToast('Selecione um trecho de texto primeiro.'); return; }
+    const color = s.dataset.color;
+    document.execCommand('styleWithCSS', false, true);
+    if(color==='transparent'){
+      document.execCommand('hiliteColor', false, 'transparent');
+      document.execCommand('backColor', false, 'transparent');
+      clearFontColorFromSelection();
+    } else {
+      document.execCommand('hiliteColor', false, color);
+      document.execCommand('foreColor', false, '#000000');
+    }
+    scheduleSave();
+  });
+});
+
+// ─── FONT COLOR (com toggle + botão "padrão") ────────────────
+function clearFontColorFromSelection(){
+  const sel = window.getSelection();
+  if(!sel.rangeCount || sel.isCollapsed) return;
+  const range = sel.getRangeAt(0);
+
+  const contents = range.extractContents();
+
+  // Limpa qualquer color/style DENTRO do que foi extraído (caso a seleção
+  // tenha englobado inteiramente spans/fonts coloridos).
+  function stripColor(node){
+    if(node.nodeType === 1){
+      if(node.style && node.style.color){
+        node.style.color = '';
+        const styleAttr = node.getAttribute('style');
+        if(styleAttr !== null && styleAttr.trim() === '') node.removeAttribute('style');
+      }
+      if(node.tagName === 'FONT' && node.hasAttribute('color')){
+        node.removeAttribute('color');
+      }
+      Array.from(node.childNodes).forEach(stripColor);
+    }
+  }
+  Array.from(contents.childNodes).forEach(stripColor);
+
+  // Envolve em um span com color:var(--ink) para SOBRESCREVER qualquer
+  // cor herdada de um ancestral colorido (esse era o bug: quando a seleção
+  // estava DENTRO de um span colorido, extract não tirava a cor do pai).
+  // Usar var(--ink) garante que a cor acompanhe o tema atual.
+  const wrapper = document.createElement('span');
+  wrapper.style.color = 'var(--ink)';
+  wrapper.appendChild(contents);
+  range.insertNode(wrapper);
+
+  // Restaura a seleção sobre o wrapper inserido
+  const newRange = document.createRange();
+  newRange.selectNodeContents(wrapper);
+  sel.removeAllRanges();
+  sel.addRange(newRange);
+  lastRange = newRange.cloneRange();
+}
+
+document.querySelectorAll('.fc-swatch').forEach(s=>{
+  s.addEventListener('mousedown', e=>e.preventDefault());
+  s.addEventListener('click', ()=>{
+    if(!restoreSelection()){ showToast('Selecione um trecho de texto primeiro.'); return; }
+    const target = s.dataset.color;
+    document.execCommand('styleWithCSS', false, true);
+
+    if(target === 'default'){
+      clearFontColorFromSelection();
+    } else {
+      // Toggle: se a cor atual da seleção é exatamente essa, tira
+      const current = document.queryCommandValue('foreColor');
+      if(normalizeColor(current) && normalizeColor(current) === normalizeColor(target)){
+        clearFontColorFromSelection();
+      } else {
+        document.execCommand('foreColor', false, target);
+      }
+    }
+    scheduleSave();
+  });
+});
+
+// ─── BOLD / ITALIC / UNDERLINE ───────────────────────────────
+document.querySelectorAll('.tool-btn[data-cmd]').forEach(b=>{
+  b.addEventListener('mousedown', e=>e.preventDefault());
+  b.addEventListener('click', ()=>{
+    restoreSelection();
+    document.execCommand(b.dataset.cmd, false, null);
+    scheduleSave();
+  });
+});
+
+// ─── ATALHOS DE TECLADO ──────────────────────────────────────
+document.addEventListener('keydown', e=>{
+  if((e.ctrlKey||e.metaKey) && !e.shiftKey){
+    if(e.key==='b'||e.key==='B'){ e.preventDefault(); document.execCommand('bold'); scheduleSave(); }
+    if(e.key==='i'||e.key==='I'){ e.preventDefault(); document.execCommand('italic'); scheduleSave(); }
+    if(e.key==='u'||e.key==='U'){ e.preventDefault(); document.execCommand('underline'); scheduleSave(); }
+    if(e.key==='s'||e.key==='S'){ e.preventDefault(); save(); }
+  }
+  if(e.key==='Escape'){ deselectAllImages(); }
+});
+
+// ─── ADD POINT ───────────────────────────────────────────────
+document.getElementById('btn-add-point').addEventListener('click', ()=>{
+  collectStateFromDOM();
+  state.points.push({title:'', body:''});
+  renderPoints(state.points);
+  scheduleSave();
+  setTimeout(()=>{
+    const last = pointsContainer.querySelector(`[data-idx="${state.points.length-1}"] .point-title`);
+    if(last) last.focus();
+  }, 50);
+});
+
+// ─── IMAGENS FLUTUANTES ──────────────────────────────────────
+const imgBtn = document.getElementById('btn-image');
+const imgInput = document.getElementById('img-input');
+imgBtn.addEventListener('click', ()=> imgInput.click());
+
+imgInput.addEventListener('change', async e=>{
+  const file = e.target.files[0];
+  if(!file) return;
+  try{
+    const dataUrl = await compressImage(file, 1200, 0.85);
+    const imgData = {
+      id: uid(), src: dataUrl,
+      x: 80 + Math.random()*40,
+      y: editorEl.scrollTop + 200,
+      width: 280
+    };
+    state.images = state.images || [];
+    state.images.push(imgData);
+    renderImage(imgData);
+    scheduleSave();
+    showToast('Imagem inserida. Arraste para posicionar.');
+  }catch(err){ showToast('Não consegui processar essa imagem.'); }
+  imgInput.value = '';
+});
+
+function compressImage(file, maxDim, quality){
+  return new Promise((resolve, reject)=>{
+    const img = new Image();
+    img.onload = ()=>{
+      let { width, height } = img;
+      if(width > maxDim || height > maxDim){
+        const ratio = Math.min(maxDim/width, maxDim/height);
+        width = Math.round(width*ratio);
+        height = Math.round(height*ratio);
+      }
+      const canvas = document.createElement('canvas');
+      canvas.width = width; canvas.height = height;
+      canvas.getContext('2d').drawImage(img, 0, 0, width, height);
+      try{ resolve(canvas.toDataURL('image/jpeg', quality)); }
+      catch(e){ reject(e); }
+    };
+    img.onerror = reject;
+    img.src = URL.createObjectURL(file);
+  });
+}
+
+function renderImages(){
+  imageLayer.innerHTML = '';
+  (state.images||[]).forEach(renderImage);
+}
+
+function renderImage(d){
+  const wrap = document.createElement('div');
+  wrap.className = 'floating-image';
+  wrap.dataset.id = d.id;
+  wrap.style.left = d.x + 'px';
+  wrap.style.top = d.y + 'px';
+  wrap.style.width = d.width + 'px';
+  wrap.innerHTML = `
+    <img src="${d.src}" draggable="false" alt="">
+    <div class="fi-controls"><button class="fi-btn delete" title="Remover">×</button></div>
+    <div class="fi-handle nw" data-corner="nw"></div>
+    <div class="fi-handle ne" data-corner="ne"></div>
+    <div class="fi-handle sw" data-corner="sw"></div>
+    <div class="fi-handle se" data-corner="se"></div>
+  `;
+  imageLayer.appendChild(wrap);
+  makeImageInteractive(wrap, d);
+}
+
+function deselectAllImages(){
+  document.querySelectorAll('.floating-image.selected').forEach(el=>el.classList.remove('selected'));
+}
+
+function makeImageInteractive(wrap, dataRef){
+  wrap.addEventListener('pointerdown', e=>{
+    // Usa closest() pra detectar cliques em controles/alças mesmo se o
+    // alvo for um filho do botão, ou o div container dos controles —
+    // não apenas o botão em si.
+    if(e.target.closest('.fi-btn, .fi-handle, .fi-controls')) return;
+    deselectAllImages();
+    wrap.classList.add('selected');
+    startDrag(wrap, e, 'move', dataRef);
+  });
+  wrap.querySelectorAll('.fi-handle').forEach(h=>{
+    h.addEventListener('pointerdown', e=>{
+      e.stopPropagation();
+      wrap.classList.add('selected');
+      startDrag(wrap, e, 'resize-'+h.dataset.corner, dataRef);
+    });
+  });
+  const deleteBtn = wrap.querySelector('.fi-btn.delete');
+  // stopPropagation no pointerdown garante que o wrap NÃO tente iniciar
+  // arrasto (e o setPointerCapture) ao clicar no botão de excluir,
+  // o que estava engolindo o click subsequente.
+  deleteBtn.addEventListener('pointerdown', e=>e.stopPropagation());
+  deleteBtn.addEventListener('click', e=>{
+    e.stopPropagation();
+    state.images = state.images.filter(im => im.id !== dataRef.id);
+    wrap.remove();
+    scheduleSave();
+  });
+}
+
+let drag = null;
+function startDrag(el, e, mode, dataRef){
+  el.setPointerCapture && el.setPointerCapture(e.pointerId);
+  drag = {
+    el, mode, dataRef,
+    startX: e.clientX, startY: e.clientY,
+    startLeft: parseFloat(el.style.left) || 0,
+    startTop:  parseFloat(el.style.top)  || 0,
+    startW: el.offsetWidth, startH: el.offsetHeight,
+    aspect: el.offsetWidth / Math.max(1, el.offsetHeight),
+    pointerId: e.pointerId
+  };
+  e.preventDefault();
+}
+
+document.addEventListener('pointermove', e=>{
+  if(!drag) return;
+  const dx = e.clientX - drag.startX;
+  const dy = e.clientY - drag.startY;
+  if(drag.mode === 'move'){
+    drag.el.style.left = Math.max(0, drag.startLeft + dx) + 'px';
+    drag.el.style.top  = Math.max(0, drag.startTop  + dy) + 'px';
+  } else if(drag.mode.startsWith('resize-')){
+    const corner = drag.mode.split('-')[1];
+    let newW = drag.startW;
+    let newLeft = drag.startLeft;
+    let newTop  = drag.startTop;
+    if(corner === 'se'){ newW = drag.startW + dx; }
+    else if(corner === 'ne'){
+      newW = drag.startW + dx;
+      const newH = newW / drag.aspect;
+      newTop = drag.startTop + (drag.startH - newH);
+    } else if(corner === 'sw'){
+      newW = drag.startW - dx;
+      newLeft = drag.startLeft + dx;
+    } else if(corner === 'nw'){
+      newW = drag.startW - dx;
+      newLeft = drag.startLeft + dx;
+      const newH = newW / drag.aspect;
+      newTop = drag.startTop + (drag.startH - newH);
+    }
+    newW = Math.max(60, newW);
+    drag.el.style.width = newW + 'px';
+    drag.el.style.left  = newLeft + 'px';
+    drag.el.style.top   = newTop + 'px';
+  }
+});
+
+document.addEventListener('pointerup', e=>{
+  if(!drag) return;
+  const id = drag.el.dataset.id;
+  const imgData = state.images.find(i => i.id === id);
+  if(imgData){
+    imgData.x = parseFloat(drag.el.style.left) || 0;
+    imgData.y = parseFloat(drag.el.style.top)  || 0;
+    imgData.width = drag.el.offsetWidth;
+  }
+  drag = null;
+  scheduleSave();
+});
+
+document.addEventListener('pointerdown', e=>{
+  if(!e.target.closest('.floating-image')) deselectAllImages();
+});
+
+// ─── MODAL ───────────────────────────────────────────────────
+const modal = document.getElementById('modal');
+let confirmCallback = null;
+function openConfirm(title, body, onConfirm){
+  document.getElementById('modal-title').textContent = title;
+  document.getElementById('modal-body').textContent = body;
+  confirmCallback = onConfirm;
+  modal.classList.add('show');
+}
+function closeConfirm(){ modal.classList.remove('show'); confirmCallback = null; }
+document.getElementById('modal-cancel').addEventListener('click', closeConfirm);
+document.getElementById('modal-confirm').addEventListener('click', ()=>{
+  if(confirmCallback) confirmCallback();
+  closeConfirm();
+});
+modal.addEventListener('click', e=>{ if(e.target === modal) closeConfirm(); });
+
+// ─── EXPORT ──────────────────────────────────────────────────
+document.getElementById('btn-export').addEventListener('click', ()=>{
+  collectStateFromDOM();
+  const title = (stripHtml(state.title||'') || 'Pregação').trim();
+  let pointsHtml = '';
+  state.points.forEach((p, i)=>{
+    pointsHtml += `\n<div class="label">Ponto ${i+1}</div>\n<h3>${stripHtml(p.title||'')}</h3>\n<div>${p.body||''}</div>`;
+  });
+  const html = `<!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8"><title>${escapeHtml(title)}</title>
+<style>
+body{font-family:Georgia,'Times New Roman',serif;max-width:720px;margin:40px auto;padding:0 24px;color:#1a1a1a;line-height:1.6}
+h1{font-size:32px;margin-bottom:8px}
+.ref{color:#666;font-style:italic;margin-bottom:32px;font-size:14px}
+h3{font-size:17px;margin-top:20px;margin-bottom:6px;color:#7a2e2e}
+img{max-width:100%;height:auto;border-radius:4px}
+.label{font-size:11px;letter-spacing:2px;text-transform:uppercase;color:#999;margin-top:28px;margin-bottom:6px;font-family:sans-serif}
+.basetext,.notes{background:#faf6ec;border-left:3px solid #7a2e2e;padding:14px 18px;margin:16px 0;font-size:14px}
+.notes{border-left-color:#a8823b}
+</style></head><body>
+<h1>${escapeHtml(title)}</h1>
+<div class="ref">${state.baseRef||''}</div>
+
+<div class="label">${stripHtml(state.refEyebrow||'Texto Base')} · ${stripHtml(state.refTitle||'')}</div>
+<div class="basetext">${state.refBody||''}</div>
+
+<div class="label">Introdução</div>
+<div>${state.intro||''}</div>
+${pointsHtml}
+
+<div class="label">Aplicação</div>
+<div>${state.application||''}</div>
+
+<div class="label">Conclusão</div>
+<div>${state.conclusion||''}</div>
+
+<div class="label">${stripHtml(state.notesTitle||'Notas')}</div>
+<div class="notes">${state.notesBody||''}</div>
+</body></html>`;
+
+  const blob = new Blob([html], {type:'text/html;charset=utf-8'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `${title.replace(/[^a-zA-Z0-9\u00C0-\u017F ]/g,'').trim() || 'pregacao'}.html`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+  showToast('Arquivo baixado. No Google Docs: Arquivo → Importar.');
+});
+
+// ─── INIT ────────────────────────────────────────────────────
+(async ()=>{
+  await loadTheme();
+  await load();
+  bindAllEditors();
+  // garante que execCommand use estilos CSS inline (e não <font>)
+  document.execCommand('styleWithCSS', false, true);
+
+  // Medir altura real do header e atualizar variável CSS sempre que
+  // mudar (resize de janela, wrap das ferramentas, mudança de tema, etc).
+  // Isso garante que o conteúdo NUNCA fique escondido atrás do header,
+  // mesmo em telas divididas onde a toolbar quebra em 2 linhas.
+  const headerEl = document.querySelector('header');
+  function updateHeaderHeight(){
+    const h = headerEl.offsetHeight;
+    document.documentElement.style.setProperty('--header-h', h + 'px');
+  }
+  updateHeaderHeight();
+  if(window.ResizeObserver){
+    new ResizeObserver(updateHeaderHeight).observe(headerEl);
+  }
+  window.addEventListener('resize', updateHeaderHeight);
+})();
+</script>
+
+</body>
+</html>
