@@ -68,7 +68,7 @@ body{
   display:flex;flex-direction:column;
   min-height:100vh;
   font-size:15px;line-height:1.5;
-  padding-top:var(--header-h, 65px);  /* compensa o header fixed dinamicamente */
+  padding-top:var(--header-h, 65px);
   transition:background-color .3s,color .3s;
 }
 
@@ -78,7 +78,7 @@ header{
   background:var(--bg);
   border-bottom:1px solid var(--border);
   padding:14px 24px;
-  display:flex;align-items:center;gap:16px;
+  display:flex;align-items:center;gap:10px;
   flex-wrap:wrap;
 }
 .brand{display:flex;align-items:baseline;gap:10px;font-family:'Cormorant Garamond',serif}
@@ -86,22 +86,22 @@ header{
 .brand .sub{font-family:'Outfit',sans-serif;font-size:11px;text-transform:uppercase;letter-spacing:2px;color:var(--ink-muted)}
 
 .toolbar{
-  display:flex;align-items:center;gap:4px;
+  display:flex;align-items:center;gap:2px;
   background:var(--paper);
   border:1px solid var(--border);
-  border-radius:10px;
-  padding:5px;
+  border-radius:7px;
+  padding:3px;
   box-shadow:var(--shadow);
 }
-.tool-group{display:flex;gap:3px;align-items:center}
-.tool-divider{width:1px;height:22px;background:var(--border);margin:0 4px}
+.tool-group{display:flex;gap:1px;align-items:center}
+.tool-divider{width:1px;height:13px;background:var(--border);margin:0 2px}
 .tool-btn{
-  width:32px;height:32px;
+  width:18px;height:18px;
   border:none;background:transparent;
-  border-radius:6px;cursor:pointer;
+  border-radius:4px;cursor:pointer;
   display:inline-flex;align-items:center;justify-content:center;
   color:var(--ink);
-  font-family:'Lora',serif;font-size:15px;
+  font-family:'Lora',serif;font-size:9px;
   transition:background .15s;
 }
 .tool-btn:hover{background:var(--paper-edge)}
@@ -111,8 +111,8 @@ header{
 .tool-btn.underline{text-decoration:underline;text-underline-offset:2px}
 
 .hl-swatch{
-  width:22px;height:22px;border-radius:50%;
-  border:2px solid rgba(0,0,0,.08);
+  width:13px;height:13px;border-radius:50%;
+  border:1.5px solid rgba(0,0,0,.08);
   cursor:pointer;transition:transform .15s;
 }
 .hl-swatch:hover{transform:scale(1.12)}
@@ -121,29 +121,28 @@ header{
 .hl-pink{background:var(--hl-pink-sw)}
 .hl-blue{background:var(--hl-blue-sw)}
 .hl-clear{background:var(--paper-elev);position:relative}
-.hl-clear::after{content:"";position:absolute;inset:5px;background:linear-gradient(45deg,transparent 45%,var(--accent) 45%,var(--accent) 55%,transparent 55%);border-radius:50%}
+.hl-clear::after{content:"";position:absolute;inset:3px;background:linear-gradient(45deg,transparent 45%,var(--accent) 45%,var(--accent) 55%,transparent 55%);border-radius:50%}
 
-/* font color swatches — "A" + colored bar */
 .fc-swatch{
-  width:26px;height:30px;
+  width:16px;height:18px;
   background:transparent;border:none;
-  border-radius:5px;cursor:pointer;
+  border-radius:3px;cursor:pointer;
   display:inline-flex;flex-direction:column;
   align-items:center;justify-content:center;
-  padding:3px 0;
+  padding:1px 0;
   transition:background .15s;
   position:relative;
 }
 .fc-swatch:hover{background:var(--paper-edge)}
 .fc-letter{
-  font-family:'Lora',serif;font-size:14px;font-weight:600;
+  font-family:'Lora',serif;font-size:9px;font-weight:600;
   line-height:1;color:var(--ink);
 }
-.fc-bar{width:14px;height:3px;border-radius:1px;margin-top:3px}
+.fc-bar{width:9px;height:2px;border-radius:1px;margin-top:1.5px}
 .fc-default .fc-bar{
   background:transparent;
   border:1px dashed var(--ink-muted);
-  height:0;margin-top:4px;
+  height:0;margin-top:2px;
 }
 .fc-default .fc-letter{color:var(--ink-soft)}
 
@@ -160,25 +159,28 @@ header{
 }
 .action-btn:hover{background:var(--paper);border-color:var(--accent);color:var(--accent)}
 .theme-toggle{
-  width:36px;height:36px;border:1px solid var(--border);
+  width:30px;height:30px;border:1px solid var(--border);
   background:var(--paper);border-radius:50%;cursor:pointer;
   display:inline-flex;align-items:center;justify-content:center;
   color:var(--gold);transition:all .2s;
 }
 .theme-toggle:hover{border-color:var(--gold);transform:rotate(20deg)}
-.theme-toggle svg{width:16px;height:16px}
+.theme-toggle svg{width:14px;height:14px}
 .theme-toggle .icon-sun,.theme-toggle .icon-moon{display:none}
 :root[data-theme="dark"] .theme-toggle .icon-sun{display:block}
 :root[data-theme="light"] .theme-toggle .icon-moon{display:block}
 
 .icon-btn{
-  width:36px;height:36px;border:1px solid var(--border);
+  width:30px;height:30px;border:1px solid var(--border);
   background:var(--paper);border-radius:50%;cursor:pointer;
   display:inline-flex;align-items:center;justify-content:center;
   color:var(--ink-soft);transition:all .2s;
 }
 .icon-btn:hover{border-color:var(--accent);color:var(--accent)}
-.icon-btn svg{width:16px;height:16px}
+.icon-btn svg{width:14px;height:14px}
+
+/* Grupo de ações à direita: botões juntinhos */
+.header-actions{display:flex;align-items:center;gap:4px}
 
 /* ─── LAYOUT 2 COLUNAS ─────────────────────────────────────── */
 main{
@@ -186,24 +188,16 @@ main{
   grid-template-columns:340px 1fr;
   gap:0;align-items:stretch;min-height:0;
   position:relative;
-  z-index:1;             /* fica abaixo do header (z:100) — impede que
-                            sidebars sticky subam por cima da toolbar */
+  z-index:1;
 }
 
-/* ─── COLUNA LATERAL ESQUERDA (dois cards separados) ───────── */
-/* O .left-column é o grid item — fica tão alto quanto o editor.
-   Dentro dele:
-   - .bible-section: bloco normal no topo, rola junto com a página
-   - .notes-section: sticky, gruda no topo depois que a bíblia
-     rola pra fora, e permanece visível até o fim do editor
-     (= conclusão), porque sticky para de funcionar quando o
-     containing block (.left-column) acaba. */
-.left-column{display:flex;flex-direction:column}
+.left-column{display:flex;flex-direction:column;position:relative}
 .bible-section{
   background:var(--paper);
   border-right:1px solid var(--border);
   border-bottom:1px solid var(--border);
   padding:32px 26px 30px;
+  position:relative;
   transition:background-color .3s,border-color .3s;
 }
 .notes-section{
@@ -212,16 +206,87 @@ main{
   border-top:1px solid var(--border);
   border-bottom:1px solid var(--border);
   padding:24px 26px 30px;
-  margin-top:12px;            /* gap visível entre as duas sidebars */
+  margin-top:12px;
   position:sticky;
-  top:calc(var(--header-h, 65px) + 12px);  /* gruda abaixo do header com respiro */
-  z-index:10;                 /* abaixo do header (z:100) */
+  top:calc(var(--header-h, 65px) + 12px);
+  z-index:10;
   max-height:calc(100vh - var(--header-h, 65px) - 24px);
   overflow-y:auto;
   transition:background-color .3s,border-color .3s;
 }
 .notes-accent-bar{
   height:3px;width:40px;background:var(--gold);border-radius:2px;margin-bottom:18px;
+}
+
+/* ─── BOTÃO DE PIN (cadeado) nas sidebars ────────────────── */
+.pin-btn{
+  position:absolute;top:14px;right:14px;
+  width:26px;height:26px;
+  border:1px solid transparent;background:transparent;
+  border-radius:50%;cursor:pointer;
+  display:inline-flex;align-items:center;justify-content:center;
+  color:var(--ink-muted);opacity:.45;
+  transition:opacity .2s,color .2s,border-color .2s,background .2s;
+  padding:0;z-index:2;
+}
+.pin-btn:hover{opacity:1;color:var(--accent);background:var(--paper-edge)}
+.pin-btn svg{width:13px;height:13px;transition:transform .2s}
+.pin-btn .icon-pinned{display:none}
+.pin-btn .icon-unpinned{display:block}
+.pin-btn.active{
+  opacity:1;color:var(--accent);
+  border-color:var(--accent);
+  background:color-mix(in srgb, var(--accent) 12%, transparent);
+}
+.pin-btn.active .icon-pinned{display:block;transform:rotate(45deg)}
+.pin-btn.active .icon-unpinned{display:none}
+
+/* PIN ESTADO 1 — Texto Base fixado: Texto Base vira sticky no topo,
+   Notas continua sticky mas com top calculado pra ficar logo ABAIXO
+   do Texto Base (sem passar por trás dele). */
+.left-column.bible-pinned .bible-section{
+  position:sticky;
+  top:calc(var(--header-h, 65px) + 12px);
+  max-height:var(--bible-pinned-h, 55vh);
+  overflow-y:auto;
+  z-index:30;
+  box-shadow:0 6px 18px -8px rgba(0,0,0,.25);
+  align-self:flex-start;
+}
+.left-column.bible-pinned .notes-section{
+  top:calc(var(--header-h, 65px) + 12px + var(--bible-pinned-h, 55vh) + 12px);
+  max-height:calc(100vh - var(--header-h, 65px) - 36px - var(--bible-pinned-h, 55vh));
+  margin-top:12px;
+}
+
+/* PIN ESTADO 2 — Notas fixadas SOZINHAS: as duas TROCAM de posição.
+   Notas vai pro topo (order 1), Texto Base fica embaixo (order 2). */
+.left-column.notes-pinned:not(.bible-pinned) .notes-section{
+  order:1;
+  top:calc(var(--header-h, 65px) + 12px);
+  max-height:var(--notes-pinned-h, 55vh);
+  z-index:30;
+  box-shadow:0 6px 18px -8px rgba(0,0,0,.25);
+  margin-top:0;
+}
+.left-column.notes-pinned:not(.bible-pinned) .bible-section{
+  order:2;
+  position:sticky;
+  top:calc(var(--header-h, 65px) + 12px + var(--notes-pinned-h, 55vh) + 12px);
+  max-height:calc(100vh - var(--header-h, 65px) - 36px - var(--notes-pinned-h, 55vh));
+  overflow-y:auto;
+  z-index:10;
+  align-self:flex-start;
+}
+
+/* PIN ESTADO 3 — AMBOS fixados: Texto Base em cima (altura natural),
+   Notas embaixo encostada na altura REAL renderizada do Texto Base. */
+.left-column.bible-pinned.notes-pinned .bible-section{ order:0 }
+.left-column.bible-pinned.notes-pinned .notes-section{
+  order:1;
+  top:calc(var(--header-h, 65px) + 12px + var(--bible-real-h, 300px));
+  max-height:calc(100vh - var(--header-h, 65px) - 24px - var(--bible-real-h, 300px));
+  margin-top:0;
 }
 
 /* Textos editáveis sem caixa (no estilo do painel) */
@@ -260,7 +325,7 @@ main{
   background:transparent !important;border:none !important;
   padding:0 !important;
   min-height:160px;
-  max-height:400px;          /* mostra ~8 versículos por vez */
+  max-height:400px;
   overflow-y:auto;
   scrollbar-width:thin;
   scrollbar-color:var(--border) transparent;
@@ -379,7 +444,6 @@ main{
 }
 .add-point-btn:hover{border-color:var(--gold);border-style:solid;background:var(--paper)}
 
-/* ─── HIDDEN FILE INPUT ────────────────────────────────────── */
 .file-input{display:none}
 
 /* ─── IMAGENS FLUTUANTES ───────────────────────────────────── */
@@ -426,7 +490,7 @@ main{
 .fi-handle.sw{bottom:-7px;left:-7px;cursor:nesw-resize}
 .fi-handle.se{bottom:-7px;right:-7px;cursor:nwse-resize}
 
-/* ─── TOAST (sutil) ────────────────────────────────────────── */
+/* ─── TOAST ────────────────────────────────────────────────── */
 .toast{
   position:fixed;bottom:18px;right:18px;
   background:color-mix(in srgb, var(--ink) 85%, transparent);
@@ -458,9 +522,6 @@ main{
 .modal-actions{display:flex;gap:10px;justify-content:flex-end}
 
 /* ─── RESPONSIVE ───────────────────────────────────────────── */
-/* Janela apertando: o menu lateral encolhe mas NUNCA some — só
-   o editor central vai reduzindo padding e fontes. Empilhamento
-   vertical fica reservado pra telas realmente pequenas (mobile). */
 @media (max-width:1180px){
   main{grid-template-columns:300px 1fr}
   .editor{padding:42px 40px 100px}
@@ -485,25 +546,71 @@ main{
   .notes-body{font-size:13px !important}
 }
 
-/* Mobile real (celular em portrait): aí sim, empilha. */
 @media (max-width:640px){
   main{grid-template-columns:1fr}
   .left-column{order:2}
   .editor-wrap{order:1}
-  .bible-section,.notes-section{
-    border-right:none;
-  }
+  .bible-section,.notes-section{border-right:none}
   .notes-section{
-    position:static;
-    max-height:none;
-    overflow-y:visible;
-    margin-top:0;
-    border-top:none;
+    position:static;max-height:none;overflow-y:visible;
+    margin-top:0;border-top:none;
   }
   .editor{padding:24px 16px 60px}
   .title-input{font-size:28px !important}
   header{padding:10px 12px}
   .toolbar{order:99;width:100%;overflow-x:auto}
+}
+
+/* ─── IMPRESSÃO / PDF ──────────────────────────────────────── */
+@media print{
+  html,body{
+    background:#fff !important;background-image:none !important;
+    color:#1a1a1a !important;padding-top:0 !important;font-size:11pt;
+  }
+  header,.toast,.modal-backdrop,.add-point-row,.point-actions,
+  .panel-note,.section-divider,.fi-controls,.fi-handle,.pin-btn{display:none !important}
+  main{display:block !important;z-index:auto}
+  .left-column{display:block !important;margin-bottom:18pt}
+  .bible-section,.notes-section{
+    position:static !important;max-height:none !important;
+    overflow:visible !important;
+    margin:0 0 14pt 0 !important;padding:0 !important;
+    border:none !important;background:transparent !important;
+    page-break-inside:avoid;break-inside:avoid;
+  }
+  .ref-body{max-height:none !important;overflow:visible !important}
+  .notes-accent-bar{display:none !important}
+  .ref-eyebrow,.notes-title{font-size:9pt !important;color:#888 !important;letter-spacing:2px;margin-bottom:3pt}
+  .ref-title,.notes-subtitle{font-size:14pt !important;color:#000 !important;margin-bottom:3pt}
+  .ref-subtitle{font-size:10pt !important;color:#666 !important;margin-bottom:10pt}
+  .ref-body{font-size:10pt !important;line-height:1.5 !important;color:#1a1a1a !important}
+  .ref-body .num{color:#7a2e2e !important}
+  .notes-body{font-size:10pt !important;line-height:1.5 !important;color:#1a1a1a !important}
+  .notes-body h4{color:#7a2e2e !important;margin-top:8pt}
+  .ornament{margin:6pt 0;color:#888 !important}
+  .ornament::before,.ornament::after{background:#ccc !important}
+  .editor-wrap{overflow:visible !important}
+  .editor{padding:0 !important;max-width:100% !important;margin:0 !important}
+  .image-layer{position:static !important;pointer-events:none}
+  [contenteditable]{
+    background:transparent !important;border:none !important;
+    box-shadow:none !important;padding:0 !important;color:#1a1a1a !important;
+  }
+  .title-input{font-size:22pt !important;color:#000 !important;margin-bottom:6pt;padding:0 !important}
+  .basetext-input{font-size:10pt !important;color:#666 !important;margin-bottom:12pt}
+  .point-title{
+    font-size:13pt !important;color:#7a2e2e !important;
+    margin:4pt 0 3pt !important;padding:0 !important;
+    page-break-after:avoid;break-after:avoid;
+  }
+  .body-input{font-size:11pt !important;line-height:1.5 !important;color:#1a1a1a !important}
+  .field-label{font-size:8.5pt !important;color:#888 !important;letter-spacing:1.5px;margin-bottom:3pt;margin-top:10pt}
+  .field-label .num-badge{background:#7a2e2e !important;color:#fff !important;width:16px;height:16px;font-size:9pt}
+  .field{margin-bottom:10pt !important;page-break-inside:avoid;break-inside:avoid}
+  .floating-image{box-shadow:none !important;border:1px solid #ddd !important;page-break-inside:avoid;break-inside:avoid}
+  .floating-image::before{display:none !important}
+  *{-webkit-print-color-adjust:exact !important;print-color-adjust:exact !important;color-adjust:exact !important}
+  @page{size:A4;margin:18mm 16mm}
 }
 </style>
 </head>
@@ -512,7 +619,6 @@ main{
 <header>
   <div class="brand">
     <span class="mark">Estudo</span>
-    <span class="sub">Preparação de Pregação</span>
   </div>
 
   <div class="toolbar" role="toolbar" aria-label="Ferramentas de formatação">
@@ -557,27 +663,36 @@ main{
 
     <div class="tool-group">
       <button class="tool-btn" id="btn-image" title="Inserir imagem flutuante">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
       </button>
       <input type="file" class="file-input" id="img-input" accept="image/*">
     </div>
 
   </div>
 
-  <div class="spacer"></div>
+  <div class="header-actions">
+    <div class="status" id="status">
+      <span class="dot"></span><span class="label">Salvo</span>
+    </div>
 
-  <div class="status" id="status">
-    <span class="dot"></span><span class="label">Salvo</span>
+    <button class="theme-toggle" id="btn-theme" title="Alternar tema claro/escuro">
+      <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+      <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+    </button>
+
+    <button class="icon-btn" id="btn-print" title="Imprimir / Salvar como PDF">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+    </button>
+
+    <button class="icon-btn" id="btn-import" title="Importar — abrir HTML exportado">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+    </button>
+    <input type="file" id="import-input" accept=".html,text/html" style="display:none">
+
+    <button class="icon-btn" id="btn-export" title="Exportar — baixar como HTML">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+    </button>
   </div>
-
-  <button class="theme-toggle" id="btn-theme" title="Alternar tema claro/escuro">
-    <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
-    <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
-  </button>
-
-  <button class="icon-btn" id="btn-export" title="Exportar — baixar como HTML">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-  </button>
 </header>
 
 <main>
@@ -585,6 +700,10 @@ main{
   <div class="left-column">
 
     <section class="bible-section">
+      <button class="pin-btn" data-target="bible" title="Fixar este painel na tela">
+        <svg class="icon-unpinned" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="17" x2="12" y2="22"/><path d="M5 17h14v-1.76a2 2 0 0 0-1.11-1.79l-1.78-.9A2 2 0 0 1 15 10.76V6h1a2 2 0 0 0 0-4H8a2 2 0 0 0 0 4h1v4.76a2 2 0 0 1-1.11 1.79l-1.78.9A2 2 0 0 0 5 15.24Z"/></svg>
+        <svg class="icon-pinned" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="17" x2="12" y2="22" stroke-width="2"/><path d="M5 17h14v-1.76a2 2 0 0 0-1.11-1.79l-1.78-.9A2 2 0 0 1 15 10.76V6h1a2 2 0 0 0 0-4H8a2 2 0 0 0 0 4h1v4.76a2 2 0 0 1-1.11 1.79l-1.78.9A2 2 0 0 0 5 15.24Z"/></svg>
+      </button>
       <div contenteditable="true" class="ref-eyebrow" data-key="refEyebrow" data-placeholder="Texto Base">Texto Base</div>
       <div contenteditable="true" class="ref-title" data-key="refTitle" data-placeholder="Referência">Efésios 6</div>
       <div contenteditable="true" class="ref-subtitle" data-key="refSubtitle" data-placeholder="versão · tradução">vv. 10 – 20 · Almeida Revista e Atualizada</div>
@@ -595,6 +714,10 @@ main{
     </section>
 
     <section class="notes-section">
+      <button class="pin-btn" data-target="notes" title="Fixar este painel na tela">
+        <svg class="icon-unpinned" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="17" x2="12" y2="22"/><path d="M5 17h14v-1.76a2 2 0 0 0-1.11-1.79l-1.78-.9A2 2 0 0 1 15 10.76V6h1a2 2 0 0 0 0-4H8a2 2 0 0 0 0 4h1v4.76a2 2 0 0 1-1.11 1.79l-1.78.9A2 2 0 0 0 5 15.24Z"/></svg>
+        <svg class="icon-pinned" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="17" x2="12" y2="22" stroke-width="2"/><path d="M5 17h14v-1.76a2 2 0 0 0-1.11-1.79l-1.78-.9A2 2 0 0 1 15 10.76V6h1a2 2 0 0 0 0-4H8a2 2 0 0 0 0 4h1v4.76a2 2 0 0 1-1.11 1.79l-1.78.9A2 2 0 0 0 5 15.24Z"/></svg>
+      </button>
       <div class="notes-accent-bar"></div>
       <div contenteditable="true" class="notes-title" data-key="notesTitle" data-placeholder="Notas">Notas &amp; Destaques</div>
       <div contenteditable="true" class="notes-subtitle" data-key="notesSubtitle" data-placeholder="Subtítulo">Lembretes, citações, ilustrações</div>
@@ -665,35 +788,15 @@ main{
 </div>
 
 <script>
-/* ============================================================
-   CONFIG — SYNC COM GOOGLE DOCS
-   ============================================================
-   Cole aqui os 2 valores que você obtém ao implantar o Apps Script:
-     • APPS_SCRIPT_URL → URL do Web App (termina em /exec)
-     • SYNC_TOKEN      → a mesma frase secreta que você pôs em SHARED_TOKEN
-   Se APPS_SCRIPT_URL ficar vazio, a sync fica desligada e o app
-   continua funcionando normalmente, só salvando no navegador.
-   ============================================================ */
 const APPS_SCRIPT_URL = '';
 const SYNC_TOKEN      = 'TROCAR_POR_FRASE_LONGA_SECRETA_SUA_AQUI';
-
 const SYNC_ENABLED = !!APPS_SCRIPT_URL && /^https?:\/\//.test(APPS_SCRIPT_URL);
 
-/* ------------------------------------------------------------
-   SHIM DE STORAGE
-   Quando o app rodar fora do Claude (GitHub Pages, Netlify, local),
-   window.storage não existe → cai pra localStorage. A API original
-   é assíncrona, então envelopamos pra manter o resto do código
-   inalterado.
-   ------------------------------------------------------------ */
 if (!window.storage) {
   window.storage = {
-    async get(key)        { const v = localStorage.getItem(key);
-                            return v === null ? null : { key, value: v }; },
-    async set(key, value) { localStorage.setItem(key, value);
-                            return { key, value }; },
-    async delete(key)     { localStorage.removeItem(key);
-                            return { key, deleted: true }; },
+    async get(key)        { const v = localStorage.getItem(key); return v === null ? null : { key, value: v }; },
+    async set(key, value) { localStorage.setItem(key, value); return { key, value }; },
+    async delete(key)     { localStorage.removeItem(key); return { key, deleted: true }; },
     async list(prefix) {
       const keys = [];
       for (let i = 0; i < localStorage.length; i++) {
@@ -707,6 +810,7 @@ if (!window.storage) {
 
 const STORAGE_KEY = 'sermon:current';
 const THEME_KEY = 'sermon:theme';
+const PINS_KEY = 'sermon:pins';
 
 const DEFAULTS = {
   v: 4,
@@ -740,12 +844,10 @@ function escapeHtml(s){return String(s).replace(/[&<>"]/g, c=>({'&':'&amp;','<':
 function stripHtml(s){const d=document.createElement('div');d.innerHTML=s;return d.innerText}
 function uid(){return 'i'+Math.random().toString(36).slice(2,10)}
 
-// Normaliza qualquer formato de cor pra rgb(R, G, B) usando o parser do browser
 function normalizeColor(c){
   if(!c) return '';
   const d = document.createElement('div');
-  d.style.color = '';
-  d.style.color = c;
+  d.style.color = '';d.style.color = c;
   if(!d.style.color) return '';
   document.body.appendChild(d);
   const v = getComputedStyle(d).color;
@@ -753,7 +855,6 @@ function normalizeColor(c){
   return v;
 }
 
-// ─── THEME ───────────────────────────────────────────────────
 async function loadTheme(){
   let theme = 'dark';
   try{ const r = await window.storage.get(THEME_KEY); if(r && r.value) theme = r.value; }catch(e){}
@@ -768,7 +869,6 @@ document.getElementById('btn-theme').addEventListener('click', ()=>{
   saveTheme(cur==='dark' ? 'light' : 'dark');
 });
 
-// ─── RENDER POINTS ───────────────────────────────────────────
 function renderPoints(points){
   pointsContainer.innerHTML = '';
   points.forEach((p, i) => {
@@ -830,7 +930,6 @@ function bindPointActions(){
   });
 }
 
-// ─── EDITOR BINDINGS ─────────────────────────────────────────
 function bindAllEditors(){
   document.querySelectorAll('[contenteditable="true"]').forEach(el=>{
     if(el.dataset._bound) return;
@@ -840,7 +939,6 @@ function bindAllEditors(){
   });
 }
 
-// ─── STATE ───────────────────────────────────────────────────
 let state = JSON.parse(JSON.stringify(DEFAULTS));
 
 function collectStateFromDOM(){
@@ -865,7 +963,6 @@ function applyStateToDOM(){
   renderImages();
 }
 
-// ─── LOAD / SAVE ─────────────────────────────────────────────
 async function load(){
   try{
     const res = await window.storage.get(STORAGE_KEY);
@@ -888,7 +985,7 @@ async function load(){
       setStatus('saved');
       return;
     }
-  }catch(err){/* primeira vez */}
+  }catch(err){}
   state = JSON.parse(JSON.stringify(DEFAULTS));
   renderPoints(state.points);
   bindAllEditors();
@@ -919,74 +1016,33 @@ async function save(){
   }
 }
 
-// ─── SYNC COM GOOGLE DOCS ────────────────────────────────────
-// Estratégia: depois de cada save local bem-sucedido, agendamos
-// um POST pro Apps Script (debounce de 3s pra não fritar a API
-// enquanto o usuário digita rápido). Se já houver um sync em voo,
-// enfileiramos um único "próximo" — assim coalescemos rajadas.
-let docSyncTimer    = null;
+let docSyncTimer = null;
 let docSyncInFlight = false;
-let docSyncQueued   = false;
-let docSyncState    = 'idle';   // idle | pending | syncing | ok | error
-
-function setDocSyncStatus(s, detail){
-  docSyncState = s;
-  const local = statusEl.classList.contains('error') ? 'Erro ao salvar'
-              : statusEl.classList.contains('saving') ? 'Salvando…'
-              : 'Salvo';
-  const labels = {
-    idle:    'Doc: aguardando primeira alteração',
-    pending: 'Doc: sincronização agendada…',
-    syncing: 'Doc: sincronizando agora…',
-    ok:      'Doc: sincronizado' + (detail ? ' às ' + detail : ''),
-    error:   'Doc: erro — ' + (detail || 'falha desconhecida')
-  };
-  // Sem mudar o visual da bolinha, enriquecemos o tooltip do status.
-  statusEl.title = local + ' • ' + (labels[s] || s);
-}
-
+let docSyncQueued = false;
 function scheduleSyncToDocs(){
   if(!SYNC_ENABLED) return;
-  setDocSyncStatus('pending');
   clearTimeout(docSyncTimer);
   docSyncTimer = setTimeout(syncToDocs, 3000);
 }
-
 async function syncToDocs(){
   if(!SYNC_ENABLED) return;
   if(docSyncInFlight){ docSyncQueued = true; return; }
   docSyncInFlight = true;
-  setDocSyncStatus('syncing');
   try{
-    // IMPORTANTE: não setar Content-Type. O fetch usa text/plain por
-    // padrão pra body string, que é um "simple CORS request" e NÃO
-    // dispara preflight OPTIONS. Apps Script Web Apps não respondem
-    // bem ao preflight, então essa é a forma estável de chamar.
-    const res = await fetch(APPS_SCRIPT_URL, {
-      method: 'POST',
-      body: JSON.stringify({ token: SYNC_TOKEN, state })
-    });
+    const res = await fetch(APPS_SCRIPT_URL, { method:'POST', body:JSON.stringify({token:SYNC_TOKEN,state}) });
     if(!res.ok) throw new Error('HTTP ' + res.status);
     const data = await res.json();
     if(!data || !data.ok) throw new Error((data && data.error) || 'resposta sem ok');
-    setDocSyncStatus('ok', new Date().toLocaleTimeString('pt-BR'));
   } catch(err){
     console.error('[doc-sync]', err);
-    setDocSyncStatus('error', String(err.message || err));
     showToast('Erro ao sincronizar com Google Docs (ver console).');
   } finally {
     docSyncInFlight = false;
-    if(docSyncQueued){
-      docSyncQueued = false;
-      setTimeout(syncToDocs, 800);
-    }
+    if(docSyncQueued){ docSyncQueued = false; setTimeout(syncToDocs, 800); }
   }
 }
-
-// Util pra debug: digite syncNow() no console pra forçar sync.
 window.syncNow = syncToDocs;
 
-// ─── SELECTION TRACKING ──────────────────────────────────────
 let lastRange = null;
 document.addEventListener('selectionchange', ()=>{
   const sel = window.getSelection();
@@ -1009,17 +1065,6 @@ function restoreSelection(){
   }catch(e){return false}
 }
 
-// ─── HIGHLIGHT (marca-texto) ─────────────────────────────────
-// Regra: aplicar qualquer cor de marca-texto também força a fonte
-// para PRETO IMEDIATAMENTE, garantindo legibilidade sobre o destaque
-// tanto no modo escuro quanto no claro. O usuário pode depois
-// sobrescrever com uma das 4 cores de fonte se quiser. Remover o
-// marca-texto também limpa essa cor forçada, voltando ao padrão.
-//
-// IMPORTANTE: NÃO chamar restoreSelection() entre os dois execCommand —
-// o navegador já mantém a seleção nativa após o hiliteColor; restaurar
-// do lastRange (que ficou obsoleto após o wrap) faz o segundo comando
-// falhar para texto comum.
 document.querySelectorAll('.hl-swatch').forEach(s=>{
   s.addEventListener('mousedown', e=>e.preventDefault());
   s.addEventListener('click', ()=>{
@@ -1038,16 +1083,11 @@ document.querySelectorAll('.hl-swatch').forEach(s=>{
   });
 });
 
-// ─── FONT COLOR (com toggle + botão "padrão") ────────────────
 function clearFontColorFromSelection(){
   const sel = window.getSelection();
   if(!sel.rangeCount || sel.isCollapsed) return;
   const range = sel.getRangeAt(0);
-
   const contents = range.extractContents();
-
-  // Limpa qualquer color/style DENTRO do que foi extraído (caso a seleção
-  // tenha englobado inteiramente spans/fonts coloridos).
   function stripColor(node){
     if(node.nodeType === 1){
       if(node.style && node.style.color){
@@ -1055,24 +1095,15 @@ function clearFontColorFromSelection(){
         const styleAttr = node.getAttribute('style');
         if(styleAttr !== null && styleAttr.trim() === '') node.removeAttribute('style');
       }
-      if(node.tagName === 'FONT' && node.hasAttribute('color')){
-        node.removeAttribute('color');
-      }
+      if(node.tagName === 'FONT' && node.hasAttribute('color')){ node.removeAttribute('color'); }
       Array.from(node.childNodes).forEach(stripColor);
     }
   }
   Array.from(contents.childNodes).forEach(stripColor);
-
-  // Envolve em um span com color:var(--ink) para SOBRESCREVER qualquer
-  // cor herdada de um ancestral colorido (esse era o bug: quando a seleção
-  // estava DENTRO de um span colorido, extract não tirava a cor do pai).
-  // Usar var(--ink) garante que a cor acompanhe o tema atual.
   const wrapper = document.createElement('span');
   wrapper.style.color = 'var(--ink)';
   wrapper.appendChild(contents);
   range.insertNode(wrapper);
-
-  // Restaura a seleção sobre o wrapper inserido
   const newRange = document.createRange();
   newRange.selectNodeContents(wrapper);
   sel.removeAllRanges();
@@ -1086,11 +1117,9 @@ document.querySelectorAll('.fc-swatch').forEach(s=>{
     if(!restoreSelection()){ showToast('Selecione um trecho de texto primeiro.'); return; }
     const target = s.dataset.color;
     document.execCommand('styleWithCSS', false, true);
-
     if(target === 'default'){
       clearFontColorFromSelection();
     } else {
-      // Toggle: se a cor atual da seleção é exatamente essa, tira
       const current = document.queryCommandValue('foreColor');
       if(normalizeColor(current) && normalizeColor(current) === normalizeColor(target)){
         clearFontColorFromSelection();
@@ -1102,7 +1131,6 @@ document.querySelectorAll('.fc-swatch').forEach(s=>{
   });
 });
 
-// ─── BOLD / ITALIC / UNDERLINE ───────────────────────────────
 document.querySelectorAll('.tool-btn[data-cmd]').forEach(b=>{
   b.addEventListener('mousedown', e=>e.preventDefault());
   b.addEventListener('click', ()=>{
@@ -1112,7 +1140,6 @@ document.querySelectorAll('.tool-btn[data-cmd]').forEach(b=>{
   });
 });
 
-// ─── ATALHOS DE TECLADO ──────────────────────────────────────
 document.addEventListener('keydown', e=>{
   if((e.ctrlKey||e.metaKey) && !e.shiftKey){
     if(e.key==='b'||e.key==='B'){ e.preventDefault(); document.execCommand('bold'); scheduleSave(); }
@@ -1123,7 +1150,6 @@ document.addEventListener('keydown', e=>{
   if(e.key==='Escape'){ deselectAllImages(); }
 });
 
-// ─── ADD POINT ───────────────────────────────────────────────
 document.getElementById('btn-add-point').addEventListener('click', ()=>{
   collectStateFromDOM();
   state.points.push({title:'', body:''});
@@ -1135,7 +1161,6 @@ document.getElementById('btn-add-point').addEventListener('click', ()=>{
   }, 50);
 });
 
-// ─── IMAGENS FLUTUANTES ──────────────────────────────────────
 const imgBtn = document.getElementById('btn-image');
 const imgInput = document.getElementById('img-input');
 imgBtn.addEventListener('click', ()=> imgInput.click());
@@ -1145,12 +1170,7 @@ imgInput.addEventListener('change', async e=>{
   if(!file) return;
   try{
     const dataUrl = await compressImage(file, 1200, 0.85);
-    const imgData = {
-      id: uid(), src: dataUrl,
-      x: 80 + Math.random()*40,
-      y: editorEl.scrollTop + 200,
-      width: 280
-    };
+    const imgData = { id: uid(), src: dataUrl, x: 80 + Math.random()*40, y: editorEl.scrollTop + 200, width: 280 };
     state.images = state.images || [];
     state.images.push(imgData);
     renderImage(imgData);
@@ -1167,14 +1187,12 @@ function compressImage(file, maxDim, quality){
       let { width, height } = img;
       if(width > maxDim || height > maxDim){
         const ratio = Math.min(maxDim/width, maxDim/height);
-        width = Math.round(width*ratio);
-        height = Math.round(height*ratio);
+        width = Math.round(width*ratio); height = Math.round(height*ratio);
       }
       const canvas = document.createElement('canvas');
       canvas.width = width; canvas.height = height;
       canvas.getContext('2d').drawImage(img, 0, 0, width, height);
-      try{ resolve(canvas.toDataURL('image/jpeg', quality)); }
-      catch(e){ reject(e); }
+      try{ resolve(canvas.toDataURL('image/jpeg', quality)); } catch(e){ reject(e); }
     };
     img.onerror = reject;
     img.src = URL.createObjectURL(file);
@@ -1211,9 +1229,6 @@ function deselectAllImages(){
 
 function makeImageInteractive(wrap, dataRef){
   wrap.addEventListener('pointerdown', e=>{
-    // Usa closest() pra detectar cliques em controles/alças mesmo se o
-    // alvo for um filho do botão, ou o div container dos controles —
-    // não apenas o botão em si.
     if(e.target.closest('.fi-btn, .fi-handle, .fi-controls')) return;
     deselectAllImages();
     wrap.classList.add('selected');
@@ -1227,9 +1242,6 @@ function makeImageInteractive(wrap, dataRef){
     });
   });
   const deleteBtn = wrap.querySelector('.fi-btn.delete');
-  // stopPropagation no pointerdown garante que o wrap NÃO tente iniciar
-  // arrasto (e o setPointerCapture) ao clicar no botão de excluir,
-  // o que estava engolindo o click subsequente.
   deleteBtn.addEventListener('pointerdown', e=>e.stopPropagation());
   deleteBtn.addEventListener('click', e=>{
     e.stopPropagation();
@@ -1253,7 +1265,6 @@ function startDrag(el, e, mode, dataRef){
   };
   e.preventDefault();
 }
-
 document.addEventListener('pointermove', e=>{
   if(!drag) return;
   const dx = e.clientX - drag.startX;
@@ -1267,26 +1278,15 @@ document.addEventListener('pointermove', e=>{
     let newLeft = drag.startLeft;
     let newTop  = drag.startTop;
     if(corner === 'se'){ newW = drag.startW + dx; }
-    else if(corner === 'ne'){
-      newW = drag.startW + dx;
-      const newH = newW / drag.aspect;
-      newTop = drag.startTop + (drag.startH - newH);
-    } else if(corner === 'sw'){
-      newW = drag.startW - dx;
-      newLeft = drag.startLeft + dx;
-    } else if(corner === 'nw'){
-      newW = drag.startW - dx;
-      newLeft = drag.startLeft + dx;
-      const newH = newW / drag.aspect;
-      newTop = drag.startTop + (drag.startH - newH);
-    }
+    else if(corner === 'ne'){ newW = drag.startW + dx; const newH = newW / drag.aspect; newTop = drag.startTop + (drag.startH - newH); }
+    else if(corner === 'sw'){ newW = drag.startW - dx; newLeft = drag.startLeft + dx; }
+    else if(corner === 'nw'){ newW = drag.startW - dx; newLeft = drag.startLeft + dx; const newH = newW / drag.aspect; newTop = drag.startTop + (drag.startH - newH); }
     newW = Math.max(60, newW);
     drag.el.style.width = newW + 'px';
     drag.el.style.left  = newLeft + 'px';
     drag.el.style.top   = newTop + 'px';
   }
 });
-
 document.addEventListener('pointerup', e=>{
   if(!drag) return;
   const id = drag.el.dataset.id;
@@ -1299,12 +1299,10 @@ document.addEventListener('pointerup', e=>{
   drag = null;
   scheduleSave();
 });
-
 document.addEventListener('pointerdown', e=>{
   if(!e.target.closest('.floating-image')) deselectAllImages();
 });
 
-// ─── MODAL ───────────────────────────────────────────────────
 const modal = document.getElementById('modal');
 let confirmCallback = null;
 function openConfirm(title, body, onConfirm){
@@ -1321,7 +1319,13 @@ document.getElementById('modal-confirm').addEventListener('click', ()=>{
 });
 modal.addEventListener('click', e=>{ if(e.target === modal) closeConfirm(); });
 
-// ─── EXPORT ──────────────────────────────────────────────────
+// ─── PRINT ───────────────────────────────────────────────────
+document.getElementById('btn-print').addEventListener('click', ()=>{
+  collectStateFromDOM();
+  setTimeout(()=> window.print(), 50);
+});
+
+// ─── EXPORT (com imagens embedadas) ─────────────────────────
 document.getElementById('btn-export').addEventListener('click', ()=>{
   collectStateFromDOM();
   const title = (stripHtml(state.title||'') || 'Pregação').trim();
@@ -1329,6 +1333,20 @@ document.getElementById('btn-export').addEventListener('click', ()=>{
   state.points.forEach((p, i)=>{
     pointsHtml += `\n<div class="label">Ponto ${i+1}</div>\n<h3>${stripHtml(p.title||'')}</h3>\n<div>${p.body||''}</div>`;
   });
+
+  // Imagens flutuantes embutidas com metadados pra preservar no re-import
+  let imagesHtml = '';
+  const imgs = state.images || [];
+  if(imgs.length){
+    imagesHtml = '\n<div class="label">Imagens</div>\n<div class="images-section" data-images="true">';
+    imgs.forEach((im, i)=>{
+      imagesHtml += `\n  <figure class="floating-image-export" data-id="${escapeHtml(im.id||('img-'+i))}" data-x="${im.x||0}" data-y="${im.y||0}" data-width="${im.width||280}">
+    <img src="${escapeHtml(im.src||'')}" alt="">
+  </figure>`;
+    });
+    imagesHtml += '\n</div>';
+  }
+
   const html = `<!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8"><title>${escapeHtml(title)}</title>
 <style>
 body{font-family:Georgia,'Times New Roman',serif;max-width:720px;margin:40px auto;padding:0 24px;color:#1a1a1a;line-height:1.6}
@@ -1339,6 +1357,9 @@ img{max-width:100%;height:auto;border-radius:4px}
 .label{font-size:11px;letter-spacing:2px;text-transform:uppercase;color:#999;margin-top:28px;margin-bottom:6px;font-family:sans-serif}
 .basetext,.notes{background:#faf6ec;border-left:3px solid #7a2e2e;padding:14px 18px;margin:16px 0;font-size:14px}
 .notes{border-left-color:#a8823b}
+.images-section{display:flex;flex-wrap:wrap;gap:16px;margin:12px 0}
+.images-section figure{margin:0;max-width:320px}
+.images-section img{display:block;width:100%;border-radius:6px;box-shadow:0 4px 14px rgba(0,0,0,.12)}
 </style></head><body>
 <h1>${escapeHtml(title)}</h1>
 <div class="ref">${state.baseRef||''}</div>
@@ -1358,6 +1379,7 @@ ${pointsHtml}
 
 <div class="label">${stripHtml(state.notesTitle||'Notas')}</div>
 <div class="notes">${state.notesBody||''}</div>
+${imagesHtml}
 </body></html>`;
 
   const blob = new Blob([html], {type:'text/html;charset=utf-8'});
@@ -1372,38 +1394,204 @@ ${pointsHtml}
   showToast('Arquivo baixado. No Google Docs: Arquivo → Importar.');
 });
 
+// ─── IMPORT ──────────────────────────────────────────────────
+const importBtn = document.getElementById('btn-import');
+const importInput = document.getElementById('import-input');
+
+importBtn.addEventListener('click', ()=>{
+  openConfirm(
+    'Importar arquivo HTML?',
+    'O conteúdo atual será substituído pelo do arquivo. Considere exportar antes para guardar uma cópia.',
+    ()=> importInput.click()
+  );
+});
+
+importInput.addEventListener('change', async e=>{
+  const file = e.target.files[0];
+  if(!file) return;
+  try{
+    const text = await file.text();
+    const parsed = parseExportedHtml(text);
+    if(!parsed){
+      showToast('Arquivo não reconhecido como exportação válida.');
+      importInput.value = '';
+      return;
+    }
+    const keepCurrentImages = !parsed.images;
+    const currentImages = state.images || [];
+    state = Object.assign({}, state, parsed);
+    if(keepCurrentImages) state.images = currentImages;
+    if(!state.images) state.images = [];
+    applyStateToDOM();
+    scheduleSave();
+    showToast('Pregação importada com sucesso.');
+  }catch(err){
+    showToast('Não consegui ler o arquivo.');
+  }
+  importInput.value = '';
+});
+
+function parseExportedHtml(html){
+  try{
+    const doc = new DOMParser().parseFromString(html, 'text/html');
+    const result = {};
+
+    const h1 = doc.querySelector('h1');
+    if(h1) result.title = h1.innerHTML.trim();
+
+    const refDiv = doc.querySelector('.ref');
+    if(refDiv) result.baseRef = refDiv.innerHTML.trim();
+
+    const labels = Array.from(doc.querySelectorAll('.label'));
+    const points = [];
+
+    labels.forEach(label=>{
+      const text = label.textContent.trim();
+      const chunks = [];
+      let n = label.nextElementSibling;
+      while(n && !n.classList.contains('label')){
+        chunks.push(n);
+        n = n.nextElementSibling;
+      }
+
+      if(/^Texto Base/i.test(text)){
+        const bt = chunks.find(c => c.classList && c.classList.contains('basetext'));
+        if(bt) result.refBody = bt.innerHTML.trim();
+        const m = text.match(/^Texto Base\s*·\s*(.+)/i);
+        if(m) result.refTitle = m[1].trim();
+        return;
+      }
+      if(/^Introdu[cç][aã]o/i.test(text)){
+        if(chunks.length === 1 && chunks[0].tagName === 'DIV'){
+          result.intro = chunks[0].innerHTML.trim();
+        } else {
+          result.intro = chunks.map(c => c.outerHTML).join('').trim();
+        }
+        return;
+      }
+      if(/^Ponto\s+\d+/i.test(text)){
+        const h3 = chunks.find(c => c.tagName === 'H3');
+        const body = chunks.find(c => c.tagName === 'DIV');
+        points.push({
+          title: h3 ? h3.innerHTML.trim() : '',
+          body:  body ? body.innerHTML.trim() : ''
+        });
+        return;
+      }
+      if(/^Aplica[cç][aã]o/i.test(text)){
+        if(chunks.length === 1 && chunks[0].tagName === 'DIV'){
+          result.application = chunks[0].innerHTML.trim();
+        } else {
+          result.application = chunks.map(c => c.outerHTML).join('').trim();
+        }
+        return;
+      }
+      if(/^Conclus[aã]o/i.test(text)){
+        if(chunks.length === 1 && chunks[0].tagName === 'DIV'){
+          result.conclusion = chunks[0].innerHTML.trim();
+        } else {
+          result.conclusion = chunks.map(c => c.outerHTML).join('').trim();
+        }
+        return;
+      }
+      if(/^Notas/i.test(text)){
+        const notes = chunks.find(c => c.classList && c.classList.contains('notes'));
+        if(notes) result.notesBody = notes.innerHTML.trim();
+        return;
+      }
+      if(/^Imagens/i.test(text)){
+        const sec = chunks.find(c => c.classList && c.classList.contains('images-section'));
+        if(sec){
+          const figs = Array.from(sec.querySelectorAll('figure.floating-image-export'));
+          result.images = figs.map((fig, idx)=>{
+            const img = fig.querySelector('img');
+            return {
+              id:    fig.dataset.id || ('img-' + idx),
+              src:   img ? img.getAttribute('src') : '',
+              x:     parseFloat(fig.dataset.x)     || (80 + idx*30),
+              y:     parseFloat(fig.dataset.y)     || (200 + idx*30),
+              width: parseFloat(fig.dataset.width) || 280
+            };
+          }).filter(im => im.src);
+        }
+        return;
+      }
+    });
+
+    if(points.length) result.points = points;
+    if(!result.title && !result.points && !result.intro) return null;
+    return result;
+  }catch(err){
+    return null;
+  }
+}
+
 // ─── INIT ────────────────────────────────────────────────────
 (async ()=>{
   await loadTheme();
   await load();
   bindAllEditors();
-
-  // Anuncia o estado de sync com Docs no console e no tooltip do status.
-  if(SYNC_ENABLED){
-    setDocSyncStatus('idle');
-    console.log('%c[Estudo] Sync com Google Docs ATIVO', 'color:#5fa05f;font-weight:bold');
-  } else {
-    statusEl.title = 'Salvo • Sync com Docs DESLIGADO — preencha APPS_SCRIPT_URL no topo do arquivo.';
-    console.log('%c[Estudo] Sync com Docs DESLIGADO — preencha APPS_SCRIPT_URL e SYNC_TOKEN no topo do <script>', 'color:#c89a3a;font-weight:bold');
-  }
-
-  // garante que execCommand use estilos CSS inline (e não <font>)
   document.execCommand('styleWithCSS', false, true);
 
-  // Medir altura real do header e atualizar variável CSS sempre que
-  // mudar (resize de janela, wrap das ferramentas, mudança de tema, etc).
-  // Isso garante que o conteúdo NUNCA fique escondido atrás do header,
-  // mesmo em telas divididas onde a toolbar quebra em 2 linhas.
   const headerEl = document.querySelector('header');
+  const leftCol  = document.querySelector('.left-column');
+  const bibleSec = document.querySelector('.bible-section');
+  const notesSec = document.querySelector('.notes-section');
+
   function updateHeaderHeight(){
-    const h = headerEl.offsetHeight;
-    document.documentElement.style.setProperty('--header-h', h + 'px');
+    document.documentElement.style.setProperty('--header-h', headerEl.offsetHeight + 'px');
   }
-  updateHeaderHeight();
+  function updatePinnedHeights(){
+    if(leftCol.classList.contains('bible-pinned')){
+      const cap = Math.min(bibleSec.scrollHeight, window.innerHeight * 0.55);
+      document.documentElement.style.setProperty('--bible-pinned-h', cap + 'px');
+      requestAnimationFrame(()=>{
+        document.documentElement.style.setProperty('--bible-real-h', bibleSec.offsetHeight + 'px');
+      });
+    }
+    if(leftCol.classList.contains('notes-pinned')){
+      const cap = Math.min(notesSec.scrollHeight, window.innerHeight * 0.55);
+      document.documentElement.style.setProperty('--notes-pinned-h', cap + 'px');
+    }
+  }
+  function refresh(){ updateHeaderHeight(); updatePinnedHeights(); }
+  refresh();
   if(window.ResizeObserver){
-    new ResizeObserver(updateHeaderHeight).observe(headerEl);
+    new ResizeObserver(refresh).observe(headerEl);
+    new ResizeObserver(updatePinnedHeights).observe(bibleSec);
+    new ResizeObserver(updatePinnedHeights).observe(notesSec);
   }
-  window.addEventListener('resize', updateHeaderHeight);
+  window.addEventListener('resize', refresh);
+
+  // PIN BUTTONS
+  let pinState = { bible:false, notes:false };
+  try{
+    const r = await window.storage.get(PINS_KEY);
+    if(r && r.value) pinState = JSON.parse(r.value);
+  }catch(e){}
+
+  function applyPinState(){
+    leftCol.classList.toggle('bible-pinned', pinState.bible);
+    leftCol.classList.toggle('notes-pinned', pinState.notes);
+    document.querySelector('.pin-btn[data-target="bible"]').classList.toggle('active', pinState.bible);
+    document.querySelector('.pin-btn[data-target="notes"]').classList.toggle('active', pinState.notes);
+    requestAnimationFrame(updatePinnedHeights);
+  }
+  async function savePinState(){
+    try{ await window.storage.set(PINS_KEY, JSON.stringify(pinState)); }catch(e){}
+  }
+  applyPinState();
+
+  document.querySelectorAll('.pin-btn').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      const target = btn.dataset.target;
+      pinState[target] = !pinState[target];
+      applyPinState();
+      savePinState();
+      const labels = {bible:'Texto Base', notes:'Notas'};
+      showToast(pinState[target] ? `${labels[target]} fixado na tela` : `${labels[target]} desafixado`);
+    });
+  });
 })();
 </script>
 
